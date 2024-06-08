@@ -1,0 +1,46 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}My Site{% endblock %}</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="{% static 'css/styles.css' %}" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar navbar-custom">
+        <ul class="navbar-nav container-fluid d-flex justify-content-around">
+            <li class="nav-item">
+                <a class="navbar-brand text-white" href="{% url 'blog-home' %}">My Site</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-white" href="{% url 'post-create' %}">New Post</a>
+            </li>
+            {% if user.is_authenticated %}
+            <li class="nav-item">
+                <a class="nav-link text-white" href="{% url 'account_logout' %}">Logout</a>
+            </li>
+            {% else %}
+            <li class="nav-item">
+                <a class="nav-link text-white" href="{% url 'account_login' %}">Login</a>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+    <header class="container my-4 header-custom">
+        <h1>{% block header %}Welcome to My Site{% endblock %}</h1>
+    </header>
+    <div class="container main-content">
+        <div class="content-container">
+            <div class="content-block">
+                {% block content %}{% endblock %}
+            </div>
+        </div>
+    </div>
+    <footer class="footer-custom text-center">
+        <p>Footer Content Here &copy; 2023</p>
+    </footer>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

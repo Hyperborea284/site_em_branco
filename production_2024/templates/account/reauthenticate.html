@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% load allauth %}
+{% load i18n %}
+{% block content %}
+<div class="content-block">
+    <p>
+        {% blocktranslate %}Enter your password:{% endblocktranslate %}
+    </p>
+    {% url 'account_reauthenticate' as action_url %}
+    <form method="post" action="{{ action_url }}">
+        {% csrf_token %}
+        {{ form.as_p }}
+        {{ redirect_field }}
+        <button type="submit" class="btn btn-primary">
+            {% trans "Confirm" %}
+        </button>
+    </form>
+</div>
+{% endblock %}

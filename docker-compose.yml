@@ -1,0 +1,52 @@
+version: '3'
+
+services:
+  ephor.com.br:
+    build: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+      - static_volume:/app/static
+      - media_volume:/app/media
+    environment:
+      - DJANGO_SETTINGS_MODULE=production_2024.settings      
+    command: uwsgi --http :8000 --module production_2024.wsgi
+    dns:
+      - 1.1.1.1
+      - 1.0.0.1
+    extra_hosts:
+      - "ephor.com.br:0.0.0.0" 
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "200k"
+        max-file: "10"
+        labels: "production_2024_logs"
+
+  ephor-dev:
+    build: .
+    ports:
+      - "4747:8000" # Mapeia a porta 4747 do host para a porta 8000 do container
+    volumes:
+      - .:/app
+      - static_volume:/app/static
+      - media_volume:/app/media
+    environment:
+      - DJANGO_SETTINGS_MODULE=production_2024.settings # Configuração de desenvolvimento
+    command: uwsgi --https :8000,fullchain.pem,privkey.pem --module production_2024.wsgi
+    dns:
+      - 1.1.1.1
+      - 1.0.0.1
+    extra_hosts:
+      - "localhost:0.0.0.0" # Alterado para 0.0.0.0 e acessível apenas localmente
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "200k"
+        max-file: "10"
+        labels: "development_logs"
+
+volumes:
+  static_volume:
+  media_volume:
