@@ -34,10 +34,17 @@ body {
     text-decoration: none;
 }
 
+/* Updated nav-link color for post titles */
+.nav-link-post-title {
+    color: #007bff; /* Define a color that is visible against the background */
+    text-decoration: none;
+}
+
 .header-custom {
     background-color: #f0f0f0;
     padding: 20px;
     color: #333;
+    flex: 1;
 }
 
 .footer-custom {
@@ -71,6 +78,36 @@ body {
 .content-container {
     width: 100%;
     max-width: 800px;
-    margin: 0 20px;
+    margin: 0 auto; /* Centraliza a lista de posts */
     box-sizing: border-box;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+}
+
+.header-container {
+    width: 100%;
+    max-width: 800px;
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+.header-container h2 {
+    margin: 0;
+}
+
+.button-container {
+    width: 100%;
+    max-width: 800px;
+    text-align: right;
+    margin-bottom: 20px;
+}
+
+.list-container {
+    width: 100%;
+    max-width: 800px;
 }

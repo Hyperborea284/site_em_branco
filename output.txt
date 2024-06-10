@@ -1,22 +1,22 @@
 [01;34m.[0m
+├── [01;34mbackend[0m
+│   ├── bib_generator.py
+│   ├── [01;34mdatabases[0m
+│   ├── __init__.py
+│   ├── llama.py
+│   ├── loads.py
+│   ├── main.py
+│   ├── [01;34mpdf_output[0m
+│   ├── [01;34m__pycache__[0m
+│   │   ├── __init__.cpython-310.pyc
+│   │   ├── main.cpython-310.pyc
+│   │   └── summarize.cpython-310.pyc
+│   ├── summarize.py
+│   ├── [01;32mtex_generator.py[0m
+│   └── [01;32mtex_studio.sh[0m
 ├── [01;34mblog[0m
 │   ├── admin.py
 │   ├── apps.py
-│   ├── [01;34mbackend[0m
-│   │   ├── bib_generator.py
-│   │   ├── [01;34mdatabases[0m
-│   │   ├── __init__.py
-│   │   ├── llama.py
-│   │   ├── loads.py
-│   │   ├── main.py
-│   │   ├── [01;34mpdf_output[0m
-│   │   ├── [01;34m__pycache__[0m
-│   │   │   ├── __init__.cpython-310.pyc
-│   │   │   ├── main.cpython-310.pyc
-│   │   │   └── summarize.cpython-310.pyc
-│   │   ├── summarize.py
-│   │   ├── [01;32mtex_generator.py[0m
-│   │   └── [01;32mtex_studio.sh[0m
 │   ├── __init__.py
 │   ├── [01;34mmigrations[0m
 │   │   ├── 0001_initial.py

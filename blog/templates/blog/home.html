@@ -1,17 +1,22 @@
 {% extends "base.html" %}
 {% block content %}
 <div class="container">
-    <h2>Meus Posts</h2>
-    <form method="post" action="{% url 'choose_database' %}">
-        {% csrf_token %}
-        <button type="submit" name="new_post" class="btn btn-primary">Novo Post</button>
-    </form>
-    <ul class="list-group mt-3">
-        {% for post in posts %}
-            <li class="list-group-item">
-                <a href="{% url 'post_detail' post.pk %}">{{ post.title }}</a>
-            </li>
-        {% endfor %}
-    </ul>
+    <div class="header-container">
+        <h2 class="header-custom">Meus Posts</h2>
+    </div>
+    <div class="list-container">
+        <ul class="list-group mt-3 content-container">
+            <form method="post" action="{% url 'choose_database' %}">
+                {% csrf_token %}
+                <button type="submit" name="new_post" class="btn btn-primary">Novo Post</button>
+            </form>
+            {% for post in posts %}
+                <li class="list-group-item content-block">
+                    <a href="{% url 'post_detail' post.pk %}" class="nav-link-post-title"><strong>{{ post.title }}</strong></a>
+                    <p>{{ post.content|truncatewords:20 }}</p> <!-- Mostrando um resumo do conteúdo -->
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
 </div>
 {% endblock %}

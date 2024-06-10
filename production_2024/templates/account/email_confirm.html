@@ -6,7 +6,7 @@
     {% trans "Confirm Email Address" %}
 {% endblock head_title %}
 {% block content %}
-<div class="content-block">
+<div class="container mt-5">
     <h1>{% trans "Confirm Email Address" %}</h1>
     {% if confirmation %}
         {% user_display confirmation.email_address.user as user_display %}
