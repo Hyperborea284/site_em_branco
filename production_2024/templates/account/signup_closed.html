@@ -2,15 +2,19 @@
 {% load i18n %}
 {% load allauth %}
 {% block title %}
-    {% trans "Sign Up Closed" %}
+    {% trans "Verify Your Email Address" %}
 {% endblock title %}
 {% block content %}
-<div class="content-block">
-    <h1>
-        {% trans "Sign Up Closed" %}
-    </h1>
-    <p>
-        {% trans "We are sorry, but the sign up is currently closed." %}
-    </p>
+<div class="container mt-5">
+    <div class="header-container">
+        <h2 class="header-custom">{% trans "Verify Your Email Address" %}</h2>
+    </div>
+    <div class="list-container">
+        <ul class="list-group mt-3 content-container">
+            <p>
+                {% blocktrans %}We have sent an email to you for verification. Follow the link provided to finalize the signup process. If you do not see the verification email in your main inbox, check your spam folder. Please contact us if you do not receive the verification email within a few minutes.{% endblocktrans %}
+            </p>
+        </ul>
+    </div>
 </div>
 {% endblock content %}

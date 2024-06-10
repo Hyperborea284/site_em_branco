@@ -5,18 +5,24 @@
 {% endblock head_title %}
 {% block content %}
 <div class="container mt-5">
-    <h1>{% translate "Login" %}</h1>
-    <form method="post" action="{% url 'account_login' %}">
-        {% csrf_token %}
-        <div class="form-group">
-            <label for="username">{% translate "Username" %}:</label>
-            <input type="text" class="form-control" id="username" name="username" required>
-        </div>
-        <div class="form-group">
-            <label for="password">{% translate "Password" %}:</label>
-            <input type="password" class="form-control" id="password" name="password" required>
-        </div>
-        <button type="submit" class="btn btn-primary mt-3">{% translate "Login" %}</button>
-    </form>
+    <div class="header-container">
+        <h2 class="header-custom">{% translate "Login" %}</h2>
+    </div>
+    <div class="list-container">
+        <ul class="list-group mt-3 content-container">
+            <form method="post" action="{% url 'account_login' %}">
+                {% csrf_token %}
+                <div class="form-group">
+                    {{ form.as_p }}
+                </div>
+                <button type="submit" class="btn btn-primary mt-3">{% translate "Login" %}</button>
+            </form>
+            {% if not user.is_authenticated %}
+            <li class="list-group-item content-block">
+                <a href="{% url 'account_signup' %}" class="btn btn-secondary">{% translate "Sign Up" %}</a>
+            </li>
+            {% endif %}
+        </ul>
+    </div>
 </div>
 {% endblock content %}

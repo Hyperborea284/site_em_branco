@@ -1,30 +1,31 @@
 {% extends "base.html" %}
-{% load i18n %}
+{% load allauth i18n %}
 {% block head_title %}
-    {% translate "Sign Up" %}
+    {% trans "Signup" %}
 {% endblock head_title %}
 {% block content %}
 <div class="container mt-5">
-    <h1>{% translate "Sign Up" %}</h1>
-    <form method="post" action="{% url 'account_signup' %}">
-        {% csrf_token %}
-        <div class="form-group">
-            <label for="username">{% translate "Username" %}:</label>
-            <input type="text" class="form-control" id="username" name="username" required>
-        </div>
-        <div class="form-group">
-            <label for="email">{% translate "Email" %}:</label>
-            <input type="email" class="form-control" id="email" name="email" required>
-        </div>
-        <div class="form-group">
-            <label for="password1">{% translate "Password" %}:</label>
-            <input type="password" class="form-control" id="password1" name="password1" required>
-        </div>
-        <div class="form-group">
-            <label for="password2">{% translate "Confirm Password" %}:</label>
-            <input type="password" class="form-control" id="password2" name="password2" required>
-        </div>
-        <button type="submit" class="btn btn-primary mt-3">{% translate "Sign Up" %}</button>
-    </form>
+    <div class="header-container">
+        <h2 class="header-custom">{% trans "Sign Up" %}</h2>
+    </div>
+    <div class="list-container">
+        <ul class="list-group mt-3 content-container">
+            <p>
+                {% blocktranslate %}Already have an account? Then please <a href="{{ login_url }}">sign in</a>.{% endblocktranslate %}
+            </p>
+            {% if not SOCIALACCOUNT_ONLY %}
+                {% url 'account_signup' as action_url %}
+                <form method="post" action="{{ action_url }}">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    {{ redirect_field }}
+                    <button type="submit" class="btn btn-primary">{% trans "Sign Up" %}</button>
+                </form>
+            {% endif %}
+            {% if SOCIALACCOUNT_ENABLED %}
+                {% include "socialaccount/snippets/login.html" with page_layout="entrance" %}
+            {% endif %}
+        </ul>
+    </div>
 </div>
 {% endblock content %}
