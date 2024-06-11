@@ -1,0 +1,28 @@
+
+Teste em 2024-06-10 20:55:37
+URL: http://0.0.0.0:8080/accounts/login/, Status Code: 200
+URL: http://0.0.0.0:8080/accounts/logout/, Status Code: 200
+URL: http://0.0.0.0:8080/accounts/signup/, Status Code: 200
+URL: http://0.0.0.0:8080/accounts/email/, Status Code: 200
+URL: http://0.0.0.0:8080/accounts/password_reset/, Status Code: 404
+URL: http://0.0.0.0:8080/accounts/password_reset/done/, Status Code: 404
+URL: http://0.0.0.0:8080/accounts/password_change/, Status Code: 404
+URL: http://0.0.0.0:8080/accounts/password_change/done/, Status Code: 404
+
+Teste em 2024-06-10 21:00:15
+URL: http://0.0.0.0:8080/admin/, Status Code: 200
+URL: http://0.0.0.0:8080/admin/login/, Status Code: 200
+URL: http://0.0.0.0:8080/admin/blog/post/, Status Code: 200
+URL: http://0.0.0.0:8080/admin/blog/post/add/, Status Code: 200
+URL: http://0.0.0.0:8080/admin/blog/post/<int:post_id>/change/, Status Code: 200
+URL: http://0.0.0.0:8080/admin/blog/post/<int:post_id>/delete/, Status Code: 200
+
+Teste em 2024-06-10 21:02:08
+URL: http://0.0.0.0:8080/, Status Code: 200
+URL: http://0.0.0.0:8080/post/new/, Status Code: 200
+URL: http://0.0.0.0:8080/choose_database/, Status Code: 200
+URL: http://0.0.0.0:8080/main_menu/, Status Code: 200
+URL: http://0.0.0.0:8080/insert_links/, Status Code: 200
+URL: http://0.0.0.0:8080/remove_data/, Status Code: 200
+URL: http://0.0.0.0:8080/update_data/, Status Code: 200
+URL: http://0.0.0.0:8080/generate_document/, Status Code: 200
