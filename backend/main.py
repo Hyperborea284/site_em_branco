@@ -15,12 +15,12 @@ class Main:
     def __init__(self, nome_banco='database.db'):
         self.nome_banco = nome_banco
         global caminho_banco
-        self.caminho_banco = os.path.join('databases', nome_banco)
+        self.caminho_banco = os.path.join(os.path.dirname(__file__), 'databases', nome_banco)
         self.conexao = None
         self.cursor = None
         self.goose = Goose()
         self.numero_links = 0
-        #self.verificar_tabelas()
+        self.verificar_tabelas()
 
     def loop_inserir_links(self):
         print("\nAtivação do Loop de Inserção de Links")
@@ -184,6 +184,10 @@ class Main:
         self.caminho_banco = os.path.join('databases', novo_nome)
         print(f'\n"Banco de dados atualizado para {self.caminho_banco}."\n')
         self.conectar()
+
+    def listar_bancos_existentes(self):
+        diretorio = os.path.join(os.path.dirname(__file__), 'databases')
+        return [file for file in os.listdir(diretorio) if file.endswith('.db')]
 
     def criar_banco_e_tabela(self):
         self.cursor.execute('''

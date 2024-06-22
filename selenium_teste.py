@@ -1,16 +1,19 @@
 import requests
+import os
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.firefox.service import Service
 from selenium.webdriver.firefox.options import Options
 from time import sleep
 import datetime
-import os
+
+# Determina o caminho do geckodriver com base no nome de usuário
+username = os.getenv('USER')
+geckodriver_path = f'/home/{username}/.geckodriver'
 
 # Configurações iniciais
 options = Options()
 options.headless = False  # Mude para True se não quiser ver a janela do navegador
-geckodriver_path = '/home/studio/.geckodriver'
 service = Service(geckodriver_path)
 driver = webdriver.Firefox(service=service, options=options)
 
@@ -83,7 +86,7 @@ def get_status_code(url):
         return None
 
 # Gerando o arquivo de log
-log_filename = "test_results_log.txt"
+log_filename = "test_results.log"
 header = ("Códigos de status HTTP:\n"
           "1xx - Informacional\n"
           "2xx - Sucesso\n"

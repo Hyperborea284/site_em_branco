@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 import os
 from pathlib import Path
+from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -19,14 +20,17 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-ey+vweu#^u6jin-d4p0&7*%)w!^qkoz1hh&v*y@$oy(q3*b((w'
-
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['192.168.0.10', '0.0.0.0']
+ALLOWED_HOSTS = ['ephor.com.br', '0.0.0.0', 'web', '179.233.31.174']
 
+SECRET_KEY = os.getenv('SECRET_KEY')
+DEBUG = os.getenv('DEBUG') == 'True'
+
+PIX_CHAVE = os.getenv('PIX_CHAVE')
+PIX_CHAVE_PRIVADA = os.getenv('PIX_CHAVE_PRIVADA')
+PIX_URL_BASE = os.getenv('PIX_URL_BASE')
 
 # Application definition
 

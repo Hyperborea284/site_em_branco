@@ -1,5 +1,5 @@
 # Use Python 3.10 as base image
-FROM python:3.10-bullseye
+FROM python:latest
 
 ENV PYTHONUNBUFFERED 1
 
@@ -15,6 +15,9 @@ RUN apt-get update && \
 # Upgrade pip and install Python packages
 RUN pip3 install --upgrade pip && pip3 install mysqlclient numpy
 
+# Install required R packages syuzhet
+RUN Rscript -e "install.packages(c('tidyverse', 'syuzhet', 'textshaping', 'ragg', 'tm', 'SnowballC', 'wordcloud', 'RColorBrewer', 'syuzhet', 'ggplot2', 'magrittr', 'quanteda', 'rainette'), repos='http://cran.us.r-project.org')"
+
 # Copy requirements.txt and .env to the /app directory
 COPY requirements.txt .env /app/
 
@@ -25,9 +28,6 @@ RUN pip3 install --no-cache-dir -r requirements.txt
 RUN python3 -m spacy download pt_core_news_sm;
 RUN python3 -m spacy download es_core_news_sm;
 RUN python3 -m spacy download en_core_web_sm;
-
-# Install required R packages syuzhet
-RUN Rscript -e "install.packages(c('tidyverse', 'syuzhet', 'textshaping', 'ragg', 'tm', 'SnowballC', 'wordcloud', 'RColorBrewer', 'syuzhet', 'ggplot2', 'magrittr', 'quanteda', 'rainette'), repos='http://cran.us.r-project.org')"
 
 # Copy loads.py file to the /app directory
 COPY loads.py /app/

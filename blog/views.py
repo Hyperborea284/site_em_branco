@@ -42,7 +42,7 @@ def choose_database_view(request):
             database_name = request.POST.get('new_database_name')
             database.atualizar_banco(database_name)
             return redirect('main_menu')
-    existing_databases = ['db1', 'db2']  # Substitua por lógica para listar os bancos existentes
+    existing_databases = database.listar_bancos_existentes()  # Lista os bancos de dados existentes
     return render(request, 'blog/choose_database.html', {'databases': existing_databases})
 
 @login_required
