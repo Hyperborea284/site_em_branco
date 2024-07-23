@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block head_title %}
+    {% translate "Login" %}
+{% endblock head_title %}
+{% block content %}
+<div class="container mt-5">
+    <div class="header-container">
+        <h2 class="header-custom">{% translate "Login" %}</h2>
+    </div>
+    <div class="list-container">
+        <ul class="list-group mt-3 content-container">
+            <form method="post" action="{% url 'account_login' %}">
+                {% csrf_token %}
+                <div class="form-group">
+                    {{ form.as_p }}
+                </div>
+                <button type="submit" class="btn btn-primary mt-3">{% translate "Login" %}</button>
+            </form>
+            {% if not user.is_authenticated %}
+            <li class="list-group-item content-block">
+                <a href="{% url 'account_signup' %}" class="btn btn-secondary">{% translate "Sign Up" %}</a>
+            </li>
+            {% endif %}
+        </ul>
+    </div>
+</div>
+{% endblock content %}

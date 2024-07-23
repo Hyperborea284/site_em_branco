@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% load allauth %}
+{% load i18n %}
+{% block content %}
+<div class="container mt-5">
+    <div class="header-container">
+        <h2 class="header-custom">{% translate "Reauthenticate" %}</h2>
+    </div>
+    <div class="list-container">
+        <ul class="list-group mt-3 content-container">
+            <p>
+                {% blocktranslate %}Enter your password:{% endblocktranslate %}
+            </p>
+            {% url 'account_reauthenticate' as action_url %}
+            <form method="post" action="{{ action_url }}">
+                {% csrf_token %}
+                {{ form.as_p }}
+                {{ redirect_field }}
+                <button type="submit" class="btn btn-primary">
+                    {% trans "Confirm" %}
+                </button>
+            </form>
+        </ul>
+    </div>
+</div>
+{% endblock %}

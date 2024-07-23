@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block head_title %}
+    {% translate "Confirm Login Code" %}
+{% endblock head_title %}
+{% block content %}
+<div class="container mt-5">
+    <div class="header-container">
+        <h2 class="header-custom">{% translate "Confirm Login Code" %}</h2>
+    </div>
+    <div class="list-container">
+        <ul class="list-group mt-3 content-container">
+            <form method="post" action="{% url 'account_confirm_login_code' %}">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="code">{% translate "Login Code" %}:</label>
+                    <input type="text" class="form-control" id="code" name="code" required>
+                </div>
+                <button type="submit" class="btn btn-primary mt-3">{% translate "Confirm" %}</button>
+            </form>
+        </ul>
+    </div>
+</div>
+{% endblock content %}

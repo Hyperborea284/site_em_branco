@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <article class="media content-section">
+        <div class="media-body">
+            <div class="article-metadata">
+                <small class="text-muted">{{ post.date_posted }}</small>
+                <h2>{{ post.title }}</h2>
+                <p>{{ post.author }}</p>
+            </div>
+            <div>
+                {{ post.content|safe }}
+            </div>
+            {% for image in post.images.all %}
+                {% if forloop.first %}
+                    <h1>Proporção de Cada Sentimento</h1>
+                {% elif forloop.counter == 2 %}
+                    <h1>Frequência de Emoções Detectadas</h1>
+                {% elif forloop.counter == 3 %}
+                    <h1>Evolução da Pontuação por Emoção</h1>
+                {% endif %}
+                <img src="{{ image.image.url }}" alt="Image related to the post">
+            {% endfor %}
+        </div>
+    </article>
+{% endblock %}

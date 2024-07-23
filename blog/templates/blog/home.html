@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+    <div class="header-container">
+        <h2 class="header-custom">Meus Posts</h2>
+    </div>
+    <div class="list-container">
+        <ul class="list-group mt-3 content-container">
+            <form method="post" action="{% url 'create_post_from_text' %}">
+                {% csrf_token %}
+                <button type="submit" name="new_post" class="btn btn-primary">Novo Post</button>
+            </form>
+            {% for post in posts %}
+                <li class="list-group-item content-block">
+                    <a href="{% url 'post-detail' post.pk %}" class="nav-link-post-title"><strong>{{ post.title }}</strong></a>
+                    <p>{{ post.content|truncatewords:20 }}</p> <!-- Mostrando um resumo do conteúdo -->
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+{% endblock %}

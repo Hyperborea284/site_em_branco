@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+    <h2 class="header-custom nav-link-post-title">Alterar Dados</h2>
+    <div class="content-block">
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="table">Tabela:</label>
+                <input type="text" class="form-control" id="table" name="table" required>
+            </div>
+            <div class="form-group">
+                <label for="column">Coluna para alteração:</label>
+                <input type="text" class="form-control" id="column" name="column" required>
+            </div>
+            <div class="form-group">
+                <label for="new_value">Novo valor:</label>
+                <input type="text" class="form-control" id="new_value" name="new_value" required>
+            </div>
+            <div class="form-group">
+                <label for="condition">Condição para alteração (ex: id=1):</label>
+                <input type="text" class="form-control" id="condition" name="condition" required>
+            </div>
+            <button type="submit" class="btn btn-warning">Alterar</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

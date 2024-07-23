@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block head_title %}
+    {% translate "Email" %}
+{% endblock head_title %}
+{% block content %}
+<div class="container mt-5">
+    <div class="header-container">
+        <h2 class="header-custom">{% translate "Email" %}</h2>
+    </div>
+    <div class="list-container">
+        <ul class="list-group mt-3 content-container">
+            <form method="post" action="{% url 'account_email' %}">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="email">{% translate "Email Address" %}:</label>
+                    <input type="email" class="form-control" id="email" name="email" required>
+                </div>
+                <button type="submit" class="btn btn-primary mt-3">{% translate "Save" %}</button>
+            </form>
+        </ul>
+    </div>
+</div>
+{% endblock content %}

@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+    <h2 class="header-custom nav-link-post-title">Menu Principal</h2>
+    <div class="content-block">
+        <form method="post">
+            {% csrf_token %}
+            <ul class="list-group">
+                <li class="list-group-item"><button name="option" value="1" class="btn btn-link">Inserir Links</button></li>
+                <li class="list-group-item"><button name="option" value="2" class="btn btn-link">Remover Dados</button></li>
+                <li class="list-group-item"><button name="option" value="3" class="btn btn-link">Alterar Dados</button></li>
+                <li class="list-group-item"><button name="option" value="4" class="btn btn-link">Gerar Documento</button></li>
+                <li class="list-group-item"><button name="option" value="5" class="btn btn-link">Encerrar</button></li>
+            </ul>
+        </form>
+    </div>
+</div>
+{% endblock %}

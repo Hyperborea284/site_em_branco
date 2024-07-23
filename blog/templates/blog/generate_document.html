@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+    <h2 class="header-custom nav-link-post-title">Gerar Documento</h2>
+    <div class="content-block">
+        <form method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-success">Gerar</button>
+        </form>
+        {% if result %}
+            <div class="alert alert-info mt-3">
+                <strong>Resultado:</strong> {{ result }}
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
