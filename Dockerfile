@@ -53,8 +53,8 @@ RUN mkdir -p /var/log/uwsgi
 RUN chown -R www-data:www-data /var/log/uwsgi /app
 RUN chmod -R 777 /var/log/uwsgi /app
 
-# Exponha a porta 8000 para uwsgi
-EXPOSE 8000
+# Exponha a porta 8080 para uwsgi
+EXPOSE 8080
 
-# Iniciar uWSGI
-CMD ["uwsgi", "--ini", "/app/uwsgi.ini"]
+# Comando de entrada para iniciar uWSGI
+CMD ["sh", "-c", "uwsgi --http :8080 --module production_2024.wsgi --enable-threads"]

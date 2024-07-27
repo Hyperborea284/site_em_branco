@@ -172,6 +172,9 @@
 │   │   └── base.html
 │   ├── urls.py
 │   └── wsgi.py
+├── __pycache__
+│   └── wsgi.cpython-310.pyc
+├── rasc
 ├── requirements.txt
 ├── selenium_teste.py
 ├── settings.py
@@ -342,8 +345,6 @@
 │       ├── mstile-150x150.png
 │       ├── safari-pinned-tab.svg
 │       └── site.webmanifest
-├── supervisord.conf
-├── supervisord.log
 ├── templates
 │   ├── account
 │   │   ├── account_inactive.html
@@ -418,4 +419,4 @@
 ├── uwsgi.ini
 └── wsgi.py
 
-45 directories, 373 files
+46 directories, 373 files

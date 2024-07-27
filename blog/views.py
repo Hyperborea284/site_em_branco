@@ -141,7 +141,7 @@ def create_post_from_text(request):
             text = form.cleaned_data['content']
             text = text.replace('\r\n', '\n')  # Normaliza quebras de linha
             analyzer = SentimentAnalyzer()
-            result_html  = analyzer.execute_analysis_text(text)
+            result_html, images = analyzer.execute_analysis_text(text)
 
             post = Post(
                 title=form.cleaned_data['title'],
@@ -150,6 +150,9 @@ def create_post_from_text(request):
                 date_posted=timezone.now()
             )
             post.save()
+            for image_path in images:
+                post.images.create(image=image_path)
+
             return redirect('post-detail', pk=post.pk)
     else:
         form = PostForm()

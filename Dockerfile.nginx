@@ -1,0 +1,13 @@
+FROM nginx:latest
+
+# Copie os arquivos de configuração do Nginx
+COPY nginx/conf.d /etc/nginx/conf.d
+
+# Copie os certificados SSL para o diretório correto
+COPY fullchain.pem /etc/nginx/fullchain.pem
+COPY privkey.pem /etc/nginx/privkey.pem
+
+# Exponha as portas 80 e 443
+EXPOSE 80 443
+
+CMD ["nginx", "-g", "daemon off;"]
