@@ -1,0 +1,421 @@
+.
+├── backend
+│   ├── base.py
+│   ├── bib_generator.py
+│   ├── databases
+│   │   ├── database.db
+│   │   └── tse_2024.db
+│   ├── __init__.py
+│   ├── llama.py
+│   ├── loads.py
+│   ├── main.py
+│   ├── output.txt
+│   ├── pdf_output
+│   ├── __pycache__
+│   │   ├── base.cpython-310.pyc
+│   │   ├── base.cpython-312.pyc
+│   │   ├── __init__.cpython-310.pyc
+│   │   ├── __init__.cpython-312.pyc
+│   │   ├── main.cpython-310.pyc
+│   │   ├── main.cpython-312.pyc
+│   │   ├── sent_bayes.cpython-310.pyc
+│   │   ├── sent_bayes.cpython-312.pyc
+│   │   ├── summarize.cpython-310.pyc
+│   │   └── summarize.cpython-312.pyc
+│   ├── sent_bayes.py
+│   ├── summarize.py
+│   ├── tex_generator.py
+│   └── tex_studio.sh
+├── blog
+│   ├── admin.py
+│   ├── apps.py
+│   ├── forms.py
+│   ├── __init__.py
+│   ├── migrations
+│   │   ├── 0001_initial.py
+│   │   ├── 0002_remove_post_author_remove_post_created_at_and_more.py
+│   │   ├── 0003_remove_post_image_paths_post_author_post_date_posted_and_more.py
+│   │   ├── 0004_postimage.py
+│   │   ├── __init__.py
+│   │   └── __pycache__
+│   │       ├── 0001_initial.cpython-310.pyc
+│   │       ├── 0002_remove_post_author_remove_post_created_at_and_more.cpython-310.pyc
+│   │       ├── 0003_remove_post_image_paths_post_author_post_date_posted_and_more.cpython-310.pyc
+│   │       ├── 0004_postimage.cpython-310.pyc
+│   │       └── __init__.cpython-310.pyc
+│   ├── models.py
+│   ├── output.txt
+│   ├── __pycache__
+│   │   ├── admin.cpython-310.pyc
+│   │   ├── admin.cpython-312.pyc
+│   │   ├── apps.cpython-310.pyc
+│   │   ├── apps.cpython-312.pyc
+│   │   ├── forms.cpython-310.pyc
+│   │   ├── forms.cpython-312.pyc
+│   │   ├── __init__.cpython-310.pyc
+│   │   ├── __init__.cpython-312.pyc
+│   │   ├── models.cpython-310.pyc
+│   │   ├── models.cpython-312.pyc
+│   │   ├── urls.cpython-310.pyc
+│   │   ├── urls.cpython-312.pyc
+│   │   ├── views.cpython-310.pyc
+│   │   └── views.cpython-312.pyc
+│   ├── templates
+│   │   └── blog
+│   │       ├── choose_database.html
+│   │       ├── create_post_from_text.html
+│   │       ├── generate_document.html
+│   │       ├── home.html
+│   │       ├── insert_links.html
+│   │       ├── main_menu.html
+│   │       ├── post_detail.html
+│   │       ├── post_form.html
+│   │       ├── remove_data.html
+│   │       ├── text_submission.html
+│   │       └── update_data.html
+│   ├── tests.py
+│   ├── urls.py
+│   └── views.py
+├── db.sqlite3
+├── docker-compose.yml
+├── Dockerfile
+├── fullchain.pem
+├── manage.py
+├── media
+│   └── generated_images
+├── nginx
+│   └── conf.d
+│       └── default.conf
+├── output
+├── privkey.pem
+├── production_2024
+│   ├── __init__.py
+│   ├── __pycache__
+│   │   ├── __init__.cpython-310.pyc
+│   │   ├── __init__.cpython-312.pyc
+│   │   ├── settings.cpython-310.pyc
+│   │   ├── settings.cpython-312.pyc
+│   │   ├── urls.cpython-310.pyc
+│   │   ├── urls.cpython-312.pyc
+│   │   ├── wsgi.cpython-310.pyc
+│   │   └── wsgi.cpython-312.pyc
+│   ├── settings.py
+│   ├── templates
+│   │   ├── account
+│   │   │   ├── account_inactive.html
+│   │   │   ├── base_entrance.html
+│   │   │   ├── base_manage_email.html
+│   │   │   ├── base_manage.html
+│   │   │   ├── base_manage_password.html
+│   │   │   ├── base_reauthenticate.html
+│   │   │   ├── confirm_login_code.html
+│   │   │   ├── email
+│   │   │   │   ├── account_already_exists_message.txt
+│   │   │   │   ├── account_already_exists_subject.txt
+│   │   │   │   ├── base_message.txt
+│   │   │   │   ├── base_notification.txt
+│   │   │   │   ├── email_changed_message.txt
+│   │   │   │   ├── email_changed_subject.txt
+│   │   │   │   ├── email_confirmation_message.txt
+│   │   │   │   ├── email_confirmation_signup_message.txt
+│   │   │   │   ├── email_confirmation_signup_subject.txt
+│   │   │   │   ├── email_confirmation_subject.txt
+│   │   │   │   ├── email_confirm_message.txt
+│   │   │   │   ├── email_confirm_subject.txt
+│   │   │   │   ├── email_deleted_message.txt
+│   │   │   │   ├── email_deleted_subject.txt
+│   │   │   │   ├── login_code_message.txt
+│   │   │   │   ├── login_code_subject.txt
+│   │   │   │   ├── password_changed_message.txt
+│   │   │   │   ├── password_changed_subject.txt
+│   │   │   │   ├── password_reset_key_message.txt
+│   │   │   │   ├── password_reset_key_subject.txt
+│   │   │   │   ├── password_reset_message.txt
+│   │   │   │   ├── password_reset_subject.txt
+│   │   │   │   ├── password_set_message.txt
+│   │   │   │   ├── password_set_subject.txt
+│   │   │   │   ├── unknown_account_message.txt
+│   │   │   │   └── unknown_account_subject.txt
+│   │   │   ├── email_change.html
+│   │   │   ├── email_confirm.html
+│   │   │   ├── email.html
+│   │   │   ├── login.html
+│   │   │   ├── logout.html
+│   │   │   ├── messages
+│   │   │   │   ├── cannot_delete_primary_email.txt
+│   │   │   │   ├── email_confirmation_failed.txt
+│   │   │   │   ├── email_confirmation_sent.txt
+│   │   │   │   ├── email_confirmed.txt
+│   │   │   │   ├── email_deleted.txt
+│   │   │   │   ├── logged_in.txt
+│   │   │   │   ├── logged_out.txt
+│   │   │   │   ├── login_code_sent.txt
+│   │   │   │   ├── password_changed.txt
+│   │   │   │   ├── password_set.txt
+│   │   │   │   ├── primary_email_set.txt
+│   │   │   │   └── unverified_primary_email.txt
+│   │   │   ├── password_change.html
+│   │   │   ├── password_reset_done.html
+│   │   │   ├── password_reset_from_key_done.html
+│   │   │   ├── password_reset_from_key.html
+│   │   │   ├── password_reset.html
+│   │   │   ├── password_set.html
+│   │   │   ├── reauthenticate.html
+│   │   │   ├── request_login_code.html
+│   │   │   ├── signup_closed.html
+│   │   │   ├── signup.html
+│   │   │   ├── snippets
+│   │   │   │   ├── already_logged_in.html
+│   │   │   │   └── warn_no_email.html
+│   │   │   ├── verification_sent.html
+│   │   │   └── verified_email_required.html
+│   │   └── base.html
+│   ├── urls.py
+│   └── wsgi.py
+├── requirements.txt
+├── selenium_teste.py
+├── settings.py
+├── static
+│   ├── css
+│   │   └── styles.css
+│   └── favicon
+│       ├── android-chrome-192x192.png
+│       ├── android-chrome-256x256.png
+│       ├── apple-touch-icon.png
+│       ├── browserconfig.xml
+│       ├── favicon-16x16.png
+│       ├── favicon-32x32.png
+│       ├── favicon.ico
+│       ├── mstile-150x150.png
+│       ├── safari-pinned-tab.svg
+│       └── site.webmanifest
+├── staticfiles
+│   ├── admin
+│   │   ├── css
+│   │   │   ├── autocomplete.css
+│   │   │   ├── base.css
+│   │   │   ├── changelists.css
+│   │   │   ├── dark_mode.css
+│   │   │   ├── dashboard.css
+│   │   │   ├── forms.css
+│   │   │   ├── login.css
+│   │   │   ├── nav_sidebar.css
+│   │   │   ├── responsive.css
+│   │   │   ├── responsive_rtl.css
+│   │   │   ├── rtl.css
+│   │   │   ├── vendor
+│   │   │   │   └── select2
+│   │   │   │       ├── LICENSE-SELECT2.md
+│   │   │   │       ├── select2.css
+│   │   │   │       └── select2.min.css
+│   │   │   └── widgets.css
+│   │   ├── img
+│   │   │   ├── calendar-icons.svg
+│   │   │   ├── gis
+│   │   │   │   ├── move_vertex_off.svg
+│   │   │   │   └── move_vertex_on.svg
+│   │   │   ├── icon-addlink.svg
+│   │   │   ├── icon-alert.svg
+│   │   │   ├── icon-calendar.svg
+│   │   │   ├── icon-changelink.svg
+│   │   │   ├── icon-clock.svg
+│   │   │   ├── icon-deletelink.svg
+│   │   │   ├── icon-hidelink.svg
+│   │   │   ├── icon-no.svg
+│   │   │   ├── icon-unknown-alt.svg
+│   │   │   ├── icon-unknown.svg
+│   │   │   ├── icon-viewlink.svg
+│   │   │   ├── icon-yes.svg
+│   │   │   ├── inline-delete.svg
+│   │   │   ├── LICENSE
+│   │   │   ├── README.txt
+│   │   │   ├── search.svg
+│   │   │   ├── selector-icons.svg
+│   │   │   ├── sorting-icons.svg
+│   │   │   ├── tooltag-add.svg
+│   │   │   └── tooltag-arrowright.svg
+│   │   └── js
+│   │       ├── actions.js
+│   │       ├── admin
+│   │       │   ├── DateTimeShortcuts.js
+│   │       │   └── RelatedObjectLookups.js
+│   │       ├── autocomplete.js
+│   │       ├── calendar.js
+│   │       ├── cancel.js
+│   │       ├── change_form.js
+│   │       ├── collapse.js
+│   │       ├── core.js
+│   │       ├── filters.js
+│   │       ├── inlines.js
+│   │       ├── jquery.init.js
+│   │       ├── nav_sidebar.js
+│   │       ├── popup_response.js
+│   │       ├── prepopulate_init.js
+│   │       ├── prepopulate.js
+│   │       ├── SelectBox.js
+│   │       ├── SelectFilter2.js
+│   │       ├── theme.js
+│   │       ├── urlify.js
+│   │       └── vendor
+│   │           ├── jquery
+│   │           │   ├── jquery.js
+│   │           │   ├── jquery.min.js
+│   │           │   └── LICENSE.txt
+│   │           ├── select2
+│   │           │   ├── i18n
+│   │           │   │   ├── af.js
+│   │           │   │   ├── ar.js
+│   │           │   │   ├── az.js
+│   │           │   │   ├── bg.js
+│   │           │   │   ├── bn.js
+│   │           │   │   ├── bs.js
+│   │           │   │   ├── ca.js
+│   │           │   │   ├── cs.js
+│   │           │   │   ├── da.js
+│   │           │   │   ├── de.js
+│   │           │   │   ├── dsb.js
+│   │           │   │   ├── el.js
+│   │           │   │   ├── en.js
+│   │           │   │   ├── es.js
+│   │           │   │   ├── et.js
+│   │           │   │   ├── eu.js
+│   │           │   │   ├── fa.js
+│   │           │   │   ├── fi.js
+│   │           │   │   ├── fr.js
+│   │           │   │   ├── gl.js
+│   │           │   │   ├── he.js
+│   │           │   │   ├── hi.js
+│   │           │   │   ├── hr.js
+│   │           │   │   ├── hsb.js
+│   │           │   │   ├── hu.js
+│   │           │   │   ├── hy.js
+│   │           │   │   ├── id.js
+│   │           │   │   ├── is.js
+│   │           │   │   ├── it.js
+│   │           │   │   ├── ja.js
+│   │           │   │   ├── ka.js
+│   │           │   │   ├── km.js
+│   │           │   │   ├── ko.js
+│   │           │   │   ├── lt.js
+│   │           │   │   ├── lv.js
+│   │           │   │   ├── mk.js
+│   │           │   │   ├── ms.js
+│   │           │   │   ├── nb.js
+│   │           │   │   ├── ne.js
+│   │           │   │   ├── nl.js
+│   │           │   │   ├── pl.js
+│   │           │   │   ├── ps.js
+│   │           │   │   ├── pt-BR.js
+│   │           │   │   ├── pt.js
+│   │           │   │   ├── ro.js
+│   │           │   │   ├── ru.js
+│   │           │   │   ├── sk.js
+│   │           │   │   ├── sl.js
+│   │           │   │   ├── sq.js
+│   │           │   │   ├── sr-Cyrl.js
+│   │           │   │   ├── sr.js
+│   │           │   │   ├── sv.js
+│   │           │   │   ├── th.js
+│   │           │   │   ├── tk.js
+│   │           │   │   ├── tr.js
+│   │           │   │   ├── uk.js
+│   │           │   │   ├── vi.js
+│   │           │   │   ├── zh-CN.js
+│   │           │   │   └── zh-TW.js
+│   │           │   ├── LICENSE.md
+│   │           │   ├── select2.full.js
+│   │           │   └── select2.full.min.js
+│   │           └── xregexp
+│   │               ├── LICENSE.txt
+│   │               ├── xregexp.js
+│   │               └── xregexp.min.js
+│   ├── css
+│   │   └── styles.css
+│   └── favicon
+│       ├── android-chrome-192x192.png
+│       ├── android-chrome-256x256.png
+│       ├── apple-touch-icon.png
+│       ├── browserconfig.xml
+│       ├── favicon-16x16.png
+│       ├── favicon-32x32.png
+│       ├── favicon.ico
+│       ├── mstile-150x150.png
+│       ├── safari-pinned-tab.svg
+│       └── site.webmanifest
+├── supervisord.conf
+├── supervisord.log
+├── templates
+│   ├── account
+│   │   ├── account_inactive.html
+│   │   ├── base_entrance.html
+│   │   ├── base_manage_email.html
+│   │   ├── base_manage.html
+│   │   ├── base_manage_password.html
+│   │   ├── base_reauthenticate.html
+│   │   ├── confirm_login_code.html
+│   │   ├── email
+│   │   │   ├── account_already_exists_message.txt
+│   │   │   ├── account_already_exists_subject.txt
+│   │   │   ├── base_message.txt
+│   │   │   ├── base_notification.txt
+│   │   │   ├── email_changed_message.txt
+│   │   │   ├── email_changed_subject.txt
+│   │   │   ├── email_confirmation_message.txt
+│   │   │   ├── email_confirmation_signup_message.txt
+│   │   │   ├── email_confirmation_signup_subject.txt
+│   │   │   ├── email_confirmation_subject.txt
+│   │   │   ├── email_confirm_message.txt
+│   │   │   ├── email_confirm_subject.txt
+│   │   │   ├── email_deleted_message.txt
+│   │   │   ├── email_deleted_subject.txt
+│   │   │   ├── login_code_message.txt
+│   │   │   ├── login_code_subject.txt
+│   │   │   ├── password_changed_message.txt
+│   │   │   ├── password_changed_subject.txt
+│   │   │   ├── password_reset_key_message.txt
+│   │   │   ├── password_reset_key_subject.txt
+│   │   │   ├── password_reset_message.txt
+│   │   │   ├── password_reset_subject.txt
+│   │   │   ├── password_set_message.txt
+│   │   │   ├── password_set_subject.txt
+│   │   │   ├── unknown_account_message.txt
+│   │   │   └── unknown_account_subject.txt
+│   │   ├── email_change.html
+│   │   ├── email_confirm.html
+│   │   ├── email.html
+│   │   ├── login.html
+│   │   ├── logout.html
+│   │   ├── messages
+│   │   │   ├── cannot_delete_primary_email.txt
+│   │   │   ├── email_confirmation_failed.txt
+│   │   │   ├── email_confirmation_sent.txt
+│   │   │   ├── email_confirmed.txt
+│   │   │   ├── email_deleted.txt
+│   │   │   ├── logged_in.txt
+│   │   │   ├── logged_out.txt
+│   │   │   ├── login_code_sent.txt
+│   │   │   ├── password_changed.txt
+│   │   │   ├── password_set.txt
+│   │   │   ├── primary_email_set.txt
+│   │   │   └── unverified_primary_email.txt
+│   │   ├── password_change.html
+│   │   ├── password_reset_done.html
+│   │   ├── password_reset_from_key_done.html
+│   │   ├── password_reset_from_key.html
+│   │   ├── password_reset.html
+│   │   ├── password_set.html
+│   │   ├── reauthenticate.html
+│   │   ├── request_login_code.html
+│   │   ├── signup_closed.html
+│   │   ├── signup.html
+│   │   ├── snippets
+│   │   │   ├── already_logged_in.html
+│   │   │   └── warn_no_email.html
+│   │   ├── verification_sent.html
+│   │   └── verified_email_required.html
+│   └── base.html
+├── urls.py
+├── uwsgi.ini
+└── wsgi.py
+
+45 directories, 373 files

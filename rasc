@@ -51,7 +51,7 @@ RUN python3 manage.py collectstatic --noinput
 # Configure os diretórios e permissões
 RUN mkdir -p /var/log/uwsgi
 RUN chown -R www-data:www-data /var/log/uwsgi /app
-RUN chmod -R 777 /var/log/uwsgi /app
+RUN chmod -R 755 /var/log/uwsgi /app
 
 # Exponha a porta 8000 para uwsgi
 EXPOSE 8000
