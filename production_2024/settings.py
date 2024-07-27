@@ -23,9 +23,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', 'ephor.com.br', '0.0.0.0']
+ALLOWED_HOSTS = ['localhost', 'ephor.com.br', '0.0.0.0', '127.0.0.1']
 
 # Application definition
 INSTALLED_APPS = [
@@ -151,7 +151,7 @@ CSRF_TRUSTED_ORIGINS = ['https://ephor.com.br', 'https://www.ephor.com.br']
 # Configurações de segurança
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 SESSION_COOKIE_SECURE = True
-SECURE_SSL_REDIRECT = True
+SECURE_SSL_REDIRECT = False
 SECURE_HSTS_SECONDS = 3600  # Ajuste conforme necessário
 SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 SECURE_HSTS_PRELOAD = True
