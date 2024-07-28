@@ -10,6 +10,9 @@ from django.http import HttpResponseForbidden
 from backend.sent_bayes import SentimentAnalyzer
 from django.urls import reverse
 from time import sleep
+from threading import Thread
+from queue import Queue
+
 
 @login_required
 def post_detail(request, pk):
@@ -145,21 +148,22 @@ def create_post_from_text(request):
             text = text.replace('\r\n', '\n')  # Normaliza quebras de linha
             analyzer = SentimentAnalyzer()
 
-            # Loop para garantir a geração do HTML com pausas progressivas
-            result_html, images = None, []
-            attempts = 0
-            max_attempts = 5
-            while attempts < max_attempts:
-                print(f"Tentativa {attempts + 1} de {max_attempts}")
+            def process_text(queue, text):
                 result_html, images = analyzer.execute_analysis_text(text)
-                if is_valid_html(result_html):
-                    break
-                attempts += 1
-                sleep(3 * (attempts + 1))  # Pausas progressivas
+                queue.put((result_html, images))
 
-            if not is_valid_html(result_html):
-                # Handle the error or return an appropriate response
-                return render(request, 'blog/post_form.html', {'form': form, 'error': 'Erro ao processar o texto. Tente novamente.'})
+            # Usar thread para a análise de texto
+            queue = Queue()
+            thread = Thread(target=process_text, args=(queue, text))
+            thread.start()
+            thread.join()
+
+            result_html, images = queue.get()
+
+            print(f"{result_html}\n\n\n\n HTML na view")
+
+            # if not is_valid_html(result_html):
+            #     return render(request, 'blog/post_form.html', {'form': form, 'error': 'Erro ao processar o texto. Tente novamente.'})
 
             post = Post(
                 title=form.cleaned_data['title'],

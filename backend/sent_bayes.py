@@ -15,6 +15,8 @@ from django.conf import settings
 from .base import raiva, tristeza, surpresa, medo, desgosto, alegria
 import re
 from time import sleep
+from threading import Thread
+from queue import Queue
 
 class SentimentAnalyzer:
     """
@@ -239,8 +241,7 @@ class SentimentAnalyzer:
             scores_list (list): Lista de pontuações de emoções.
             paragraph_end_indices: (list): Lista indicando fim dos parágrafos.
             timestamp (str): Carimbo de data/hora para nomear os arquivos salvos.
-
-        """        
+        """
         print("Plotando gráfico de linhas de emoções...")
         emotions = list(self.emotions_funcs.keys())
         fig, axes = plt.subplots(nrows=len(emotions), ncols=1, figsize=(10, 2 * len(emotions)))
@@ -262,7 +263,6 @@ class SentimentAnalyzer:
         Args:
             scores_list (list): Lista de pontuações de emoções.
             timestamp (str): Carimbo de data/hora para nomear os arquivos salvos.
-
         """
         print("Plotando gráfico de pizza de emoções...")
         labels = list(self.emotions_funcs.keys())
@@ -280,8 +280,7 @@ class SentimentAnalyzer:
         Args:
             scores_list (list): Lista de pontuações de emoções.
             timestamp (str): Carimbo de data/hora para nomear os arquivos salvos.
-
-        """        
+        """
         print("Plotando gráfico de barras de emoções...")
         labels = list(self.emotions_funcs.keys())
         sizes = [np.sum([score[idx] for score in scores_list]) for idx in range(len(labels))]
@@ -333,11 +332,11 @@ class SentimentAnalyzer:
         return self.html_content
 
     def execute_analysis_text(self, text: str) -> tuple:
-        """Realiza a análise de sentimentos no texto fornecido, gerando gráficos e conteúdo HTML.
+        """
+        Realiza a análise de sentimentos no texto fornecido, gerando gráficos e conteúdo HTML.
 
         Args:
             text (str): Texto a ser analisado.
-    
         """
         self.reset_analyzer()
         print("Executando análise de texto...")
@@ -350,24 +349,34 @@ class SentimentAnalyzer:
         self.plot_emotion_line_charts(scores_list, paragraph_end_indices, timestamp)
         self.plot_pie_chart(scores_list, timestamp)
         self.plot_bar_chart(scores_list, timestamp)
-        
+
         # Loop para garantir a geração do HTML válido
         self.html_content, relative_paths = None, []
         attempts = 0
         max_attempts = 5
+
+        def generate_html_content_process(queue, timestamp, paragraphs, sentences):
+            html_content = self.generate_html_content(timestamp, paragraphs, sentences)
+            queue.put(html_content)
+
         while attempts < max_attempts:
             print(f"Tentativa {attempts + 1} de {max_attempts} para gerar HTML...")
-            print(self.html_content)
-            self.html_content = self.generate_html_content(timestamp, paragraphs, sentences)
+            queue = Queue()
+            thread = Thread(target=generate_html_content_process, args=(queue, timestamp, paragraphs, sentences))
+            thread.start()
+            thread.join()
+            self.html_content = queue.get()
+            print(f"{self.html_content}\n\n\n\n HTML no backend")
+
             if self.is_valid_html(self.html_content):
                 print("HTML válido gerado.")
                 break
             attempts += 1
-            sleep(2)  # Pausa para reativação
+            sleep(2 * (attempts + 1))  # Pausa progressiva para reativação
 
         if not self.is_valid_html(self.html_content):
             print("Erro ao gerar HTML válido após múltiplas tentativas.")
             raise ValueError("Erro ao gerar HTML válido. Tente novamente.")
-        
+
         relative_paths = [str(self.pie_chart_path), str(self.bar_chart_path), str(self.line_chart_path)]
         return self.html_content, relative_paths
