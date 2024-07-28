@@ -9,7 +9,7 @@ from .forms import PostForm, TextSubmissionForm
 from django.http import HttpResponseForbidden
 from backend.sent_bayes import SentimentAnalyzer
 from django.urls import reverse
-
+from time import sleep
 
 @login_required
 def post_detail(request, pk):
@@ -133,6 +133,9 @@ def post_list_view(request):
     posts = Post.objects.filter(author=request.user).order_by('-date_posted')
     return render(request, 'blog/home.html', {'posts': posts})
 
+def is_valid_html(content):
+    return bool(re.match(r'<([A-Z][A-Z0-9]*)\b[^>]*>(.*?)</\1>', content, re.IGNORECASE))
+
 @login_required
 def create_post_from_text(request):
     if request.method == 'POST':
@@ -141,7 +144,22 @@ def create_post_from_text(request):
             text = form.cleaned_data['content']
             text = text.replace('\r\n', '\n')  # Normaliza quebras de linha
             analyzer = SentimentAnalyzer()
-            result_html, images = analyzer.execute_analysis_text(text)
+
+            # Loop para garantir a geração do HTML com pausas progressivas
+            result_html, images = None, []
+            attempts = 0
+            max_attempts = 5
+            while attempts < max_attempts:
+                print(f"Tentativa {attempts + 1} de {max_attempts}")
+                result_html, images = analyzer.execute_analysis_text(text)
+                if is_valid_html(result_html):
+                    break
+                attempts += 1
+                sleep(3 * (attempts + 1))  # Pausas progressivas
+
+            if not is_valid_html(result_html):
+                # Handle the error or return an appropriate response
+                return render(request, 'blog/post_form.html', {'form': form, 'error': 'Erro ao processar o texto. Tente novamente.'})
 
             post = Post(
                 title=form.cleaned_data['title'],
@@ -157,5 +175,3 @@ def create_post_from_text(request):
     else:
         form = PostForm()
     return render(request, 'blog/post_form.html', {'form': form})
-
-

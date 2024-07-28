@@ -13,32 +13,8 @@ from nltk.stem import RSLPStemmer
 from nltk.probability import FreqDist
 from django.conf import settings
 from .base import raiva, tristeza, surpresa, medo, desgosto, alegria
-
-classificador = None
-palavrasunicas = None
-
-def count_paragraphs(text: str) -> list:
-    """Conta parágrafos no texto, retornando apenas os parágrafos não vazios.
-    
-    Args:
-        text (str): Texto a ser analisado.
-
-    Returns:
-        list: Lista de parágrafos não vazios.
-    """
-    paragraphs = text.split('\n\n')
-    return [p for p in paragraphs if p.strip()]
-
-def count_sentences(text: str) -> list:
-    """Conta frases no texto utilizando o tokenizador de sentenças do NLTK.
-
-    Args:
-        text (str): Texto a ser analisado.
-
-    Returns:
-        list: Lista de frases tokenizadas.
-    """
-    return sent_tokenize(text, language='portuguese')
+import re
+from time import sleep
 
 class SentimentAnalyzer:
     """
@@ -46,6 +22,11 @@ class SentimentAnalyzer:
     """
     def __init__(self):
         """Inicializa o analisador de sentimentos, baixando recursos necessários do NLTK."""
+        self.reset_analyzer()
+
+    def reset_analyzer(self):
+        """Reinicializa o analisador de sentimentos."""
+        print("Reinicializando SentimentAnalyzer...")
         nltk.download('stopwords')
         nltk.download('punkt')
         self.stopwordsnltk = nltk.corpus.stopwords.words('portuguese')
@@ -59,6 +40,55 @@ class SentimentAnalyzer:
         }
         self.generated_images_dir = Path(settings.MEDIA_ROOT) / 'generated_images'
         self.generated_images_dir.mkdir(parents=True, exist_ok=True)
+        self.classificador = None
+        self.palavrasunicas = None
+
+    def deactivate_analyzer(self):
+        """Desativa o analisador de sentimentos, limpando todas as variáveis e buffers."""
+        print("Desativando SentimentAnalyzer...")
+        self.classificador = None
+        self.palavrasunicas = None
+
+    @staticmethod
+    def count_paragraphs(text: str) -> list:
+        """Conta parágrafos no texto, retornando apenas os parágrafos não vazios.
+        
+        Args:
+            text (str): Texto a ser analisado.
+
+        Returns:
+            list: Lista de parágrafos não vazios.
+        """
+        print("Contando parágrafos...")
+        paragraphs = text.split('\n\n')
+        return [p for p in paragraphs if p.strip()]
+
+    @staticmethod
+    def count_sentences(text: str) -> list:
+        """Conta frases no texto utilizando o tokenizador de sentenças do NLTK.
+
+        Args:
+            text (str): Texto a ser analisado.
+
+        Returns:
+            list: Lista de frases tokenizadas.
+        """
+        print("Contando frases...")
+        return sent_tokenize(text, language='portuguese')
+
+    @staticmethod
+    def is_valid_html(content: str) -> bool:
+        """Verifica se o conteúdo é um HTML válido específico.
+
+        Args:
+            content (str): Conteúdo a ser verificado.
+
+        Returns:
+            bool: Verdadeiro se o conteúdo for HTML válido, falso caso contrário.
+        """
+        print("Verificando se o conteúdo é HTML válido...")
+        # Verificação simplificada para a estrutura de HTML gerada
+        return bool(re.search(r'<h1>Texto Analisado</h1>.*?<div.*?>.*?</div>.*?<h1>Data e Hora da Análise</h1>.*?<div.*?>.*?</div>.*?<h1>Número de Parágrafos e Frases</h1>.*?<div.*?>.*?</div>', content, re.DOTALL))
 
     def process_document(self, filepath: str) -> tuple:
         """Processa um documento para separar em parágrafos e frases.
@@ -69,18 +99,19 @@ class SentimentAnalyzer:
         Returns:
             tuple: Tupla contendo uma lista de parágrafos e uma lista de frases.
         """
+        print("Processando documento...")
         with open(filepath, 'r', encoding='utf-8') as file:
             text = file.read()
-        paragraphs = count_paragraphs(text)
-        sentences = count_sentences(text)
+        paragraphs = self.count_paragraphs(text)
+        sentences = self.count_sentences(text)
         return paragraphs, sentences
 
     def process_text(self, text: str) -> tuple:
         """Processa um texto para separar em parágrafos e frases."""
-    
+        print("Processando texto...")
         text = text.replace('\r\n', '\n')  # Normaliza quebras de linha
-        paragraphs = count_paragraphs(text)
-        sentences = count_sentences(text)
+        paragraphs = self.count_paragraphs(text)
+        sentences = self.count_sentences(text)
         return paragraphs, sentences
 
     def analyze_paragraphs(self, paragraphs: list) -> tuple:
@@ -92,11 +123,12 @@ class SentimentAnalyzer:
         Returns:
             tuple: Tupla contendo uma lista de pontuações de sentimentos e índices do final dos parágrafos.
         """
+        print("Analisando parágrafos...")
         scores_list = []
         paragraph_end_indices = []
         sentence_count = 0
         for paragraph in paragraphs:
-            sents = count_sentences(paragraph)
+            sents = self.count_sentences(paragraph)
             for sentence in sents:
                 scores = self.classify_emotion(sentence)
                 scores_list.append(scores)
@@ -113,6 +145,7 @@ class SentimentAnalyzer:
         Returns:
             list: Lista de tuplas com palavras após aplicação de stemming e suas emoções.
         """
+        print("Aplicando stemming...")
         stemmer = RSLPStemmer()
         frasesstemming = []
         for (palavras, emocao) in texto:
@@ -129,6 +162,7 @@ class SentimentAnalyzer:
         Returns:
             list: Lista de palavras extraídas das frases.
         """
+        print("Buscando palavras nas frases...")
         all_words = []
         for (words, _) in frases:
             all_words.extend(words)
@@ -143,6 +177,7 @@ class SentimentAnalyzer:
         Returns:
             FreqDist: Distribuição de frequência das palavras.
         """
+        print("Calculando frequência das palavras...")
         freq = FreqDist(palavras)
         return freq
 
@@ -155,6 +190,7 @@ class SentimentAnalyzer:
         Returns:
             list: Lista de palavras únicas.
         """
+        print("Buscando palavras únicas...")
         return list(frequencia.keys())
 
     def extratorpalavras(self, documento: list) -> dict:
@@ -166,8 +202,9 @@ class SentimentAnalyzer:
         Returns:
             dict: Dicionário de características das palavras.
         """
+        print("Extraindo palavras do documento...")
         doc = set(documento)
-        features = {word: (word in doc) for word in palavrasunicas}
+        features = {word: (word in doc) for word in self.palavrasunicas}
         return features
 
     def classify_emotion(self, sentence: str) -> np.array:
@@ -179,23 +216,24 @@ class SentimentAnalyzer:
         Returns:
             np.array: Array de probabilidades para cada emoção.
         """
-        global classificador, palavrasunicas
-        if not classificador:
+        print("Classificando emoção na frase...")
+        if not self.classificador:
+            print("Treinando classificador Bayesiano Ingênuo...")
             training_base = sum((self.emotions_funcs[emotion]() for emotion in self.emotions_funcs), [])
             frasesstemming = self.aplicastemmer(training_base)
             palavras = self.buscapalavras(frasesstemming)
             frequencia = self.buscafrequencia(palavras)
-            palavrasunicas = self.buscapalavrasunicas(frequencia)
+            self.palavrasunicas = self.buscapalavrasunicas(frequencia)
             complete_base = nltk.classify.apply_features(lambda doc: self.extratorpalavras(doc), frasesstemming)
-            classificador = nltk.NaiveBayesClassifier.train(complete_base)
+            self.classificador = nltk.NaiveBayesClassifier.train(complete_base)
 
         test_stemming = [RSLPStemmer().stem(p) for p in word_tokenize(sentence)]
         new_features = self.extratorpalavras(test_stemming)
-        result = classificador.prob_classify(new_features)
+        result = self.classificador.prob_classify(new_features)
         return np.array([result.prob(emotion) for emotion in self.emotions_funcs.keys()])
 
     def plot_emotion_line_charts(self, scores_list: list, paragraph_end_indices: list, timestamp: str):
-        """Plota um gráfico de barras da distribuição de emoções.
+        """Plota um gráfico de linhas da distribuição de emoções.
 
         Args:
             scores_list (list): Lista de pontuações de emoções.
@@ -203,6 +241,7 @@ class SentimentAnalyzer:
             timestamp (str): Carimbo de data/hora para nomear os arquivos salvos.
 
         """        
+        print("Plotando gráfico de linhas de emoções...")
         emotions = list(self.emotions_funcs.keys())
         fig, axes = plt.subplots(nrows=len(emotions), ncols=1, figsize=(10, 2 * len(emotions)))
         for i, emotion in enumerate(emotions):
@@ -225,6 +264,7 @@ class SentimentAnalyzer:
             timestamp (str): Carimbo de data/hora para nomear os arquivos salvos.
 
         """
+        print("Plotando gráfico de pizza de emoções...")
         labels = list(self.emotions_funcs.keys())
         sizes = [np.mean([score[idx] for score in scores_list]) for idx in range(len(labels))]
         colors = ['gold', 'yellowgreen', 'lightcoral', 'lightskyblue', 'lightgreen', 'orange']
@@ -242,6 +282,7 @@ class SentimentAnalyzer:
             timestamp (str): Carimbo de data/hora para nomear os arquivos salvos.
 
         """        
+        print("Plotando gráfico de barras de emoções...")
         labels = list(self.emotions_funcs.keys())
         sizes = [np.sum([score[idx] for score in scores_list]) for idx in range(len(labels))]
         plt.figure(figsize=(10, 6))
@@ -260,10 +301,11 @@ class SentimentAnalyzer:
             paragraphs (list): Lista de parágrafos do texto analisado.
             sentences (list): Lista de frases do texto analisado.
         """       
+        print("Gerando conteúdo HTML...")
         base_path = settings.MEDIA_URL + 'generated_images/'
-        self.pie_chart_path = Path(settings.MEDIA_ROOT) / f'generated_images/pie_chart_{timestamp}.png'
-        self.bar_chart_path = Path(settings.MEDIA_ROOT) / f'generated_images/bar_chart_{timestamp}.png'
-        self.line_chart_path = Path(settings.MEDIA_ROOT) / f'generated_images/emotion_scores_{timestamp}.png'
+        self.pie_chart_path = Path('generated_images') / f'pie_chart_{timestamp}.png'
+        self.bar_chart_path = Path('generated_images') / f'bar_chart_{timestamp}.png'
+        self.line_chart_path = Path('generated_images') / f'emotion_scores_{timestamp}.png'
 
         # Constrói o conteúdo HTML do texto analisado com marcações de fim de frase e numeração
         html_paragraphs = []
@@ -277,18 +319,18 @@ class SentimentAnalyzer:
             html_paragraphs.append(f'<p>{marked_paragraph}</p>')
 
         # Junta os elementos de html_paragraphs em uma string única
-        html_content_paragraphs = ''.join(html_paragraphs)
+        self.html_content_paragraphs = ''.join(html_paragraphs)
         
         # Constrói o conteúdo HTML do texto
-        html_content = f"""
+        self.html_content = f"""
             <h1>Texto Analisado</h1>
-            <div style='border:1px solid black; padding:10px;'>{html_content_paragraphs}</div>
+            <div style='border:1px solid black; padding:10px;'>{self.html_content_paragraphs}</div>
             <h1>Data e Hora da Análise</h1>
             <div style='border:1px solid black; padding:10px;'>{timestamp}</div>
             <h1>Número de Parágrafos e Frases</h1>
             <div style='border:1px solid black; padding:10px;'>Parágrafos: {len(paragraphs)}, Frases: {len(sentences)}</div>
         """
-        return html_content
+        return self.html_content
 
     def execute_analysis_text(self, text: str) -> tuple:
         """Realiza a análise de sentimentos no texto fornecido, gerando gráficos e conteúdo HTML.
@@ -297,6 +339,8 @@ class SentimentAnalyzer:
             text (str): Texto a ser analisado.
     
         """
+        self.reset_analyzer()
+        print("Executando análise de texto...")
         timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
         self.pie_chart_path = self.generated_images_dir / f'pie_chart_{timestamp}.png'
         self.bar_chart_path = self.generated_images_dir / f'bar_chart_{timestamp}.png'
@@ -306,8 +350,24 @@ class SentimentAnalyzer:
         self.plot_emotion_line_charts(scores_list, paragraph_end_indices, timestamp)
         self.plot_pie_chart(scores_list, timestamp)
         self.plot_bar_chart(scores_list, timestamp)
-        html_content = self.generate_html_content(timestamp, paragraphs, sentences)
-        relative_paths = ['app/media/generated_images/pie_chart_{timestamp}.png',
-                          'app/media/generated_images/bar_chart_{timestamp}.png',
-                          'app/media/generated_images/emotion_scores_{timestamp}.png']
-        return html_content, relative_paths
+        
+        # Loop para garantir a geração do HTML válido
+        self.html_content, relative_paths = None, []
+        attempts = 0
+        max_attempts = 5
+        while attempts < max_attempts:
+            print(f"Tentativa {attempts + 1} de {max_attempts} para gerar HTML...")
+            print(self.html_content)
+            self.html_content = self.generate_html_content(timestamp, paragraphs, sentences)
+            if self.is_valid_html(self.html_content):
+                print("HTML válido gerado.")
+                break
+            attempts += 1
+            sleep(2)  # Pausa para reativação
+
+        if not self.is_valid_html(self.html_content):
+            print("Erro ao gerar HTML válido após múltiplas tentativas.")
+            raise ValueError("Erro ao gerar HTML válido. Tente novamente.")
+        
+        relative_paths = [str(self.pie_chart_path), str(self.bar_chart_path), str(self.line_chart_path)]
+        return self.html_content, relative_paths

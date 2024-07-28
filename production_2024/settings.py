@@ -25,7 +25,7 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', 'ephor.com.br', '0.0.0.0', '127.0.0.1']
+ALLOWED_HOSTS = ['localhost', 'ephor.com.br', '0.0.0.0', '127.0.0.1', '179.233.31.174']
 
 # Application definition
 INSTALLED_APPS = [
