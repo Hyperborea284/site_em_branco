@@ -10,14 +10,17 @@ from django.http import HttpResponseForbidden
 from backend.sent_bayes import SentimentAnalyzer
 from django.urls import reverse
 from time import sleep
-from threading import Thread
+from threading import Thread, Lock
 from queue import Queue
+from django.db import transaction
 
+lock = Lock()
 
 @login_required
 def post_detail(request, pk):
     post = get_object_or_404(Post, pk=pk)
     return render(request, 'blog/post_detail.html', {'post': post})
+
 
 @login_required
 def post_create_view(request):
@@ -32,6 +35,7 @@ def post_create_view(request):
         form = PostForm()
     return render(request, 'blog/post_form.html', {'form': form})
 
+
 @login_required
 def post_update_view(request, pk):
     post = get_object_or_404(Post, pk=pk)
@@ -41,10 +45,11 @@ def post_update_view(request, pk):
         form = PostForm(request.POST, instance=post)
         if form.is_valid():
             form.save()
-            return redirect('post_detail', pk=post.pk)
+            return redirect('post-detail', pk=post.pk)
     else:
         form = PostForm(instance=post)
     return render(request, 'blog/post_form.html', {'form': form})
+
 
 @login_required
 def post_delete_view(request, pk):
@@ -55,6 +60,7 @@ def post_delete_view(request, pk):
         post.delete()
         return redirect('blog-home')
     return render(request, 'blog/post_confirm_delete.html', {'post': post})
+
 
 @login_required
 def choose_database_view(request):
@@ -69,6 +75,7 @@ def choose_database_view(request):
             return redirect('main_menu')
     existing_databases = ['db1', 'db2']  # Substitua por lógica para listar os bancos existentes
     return render(request, 'blog/choose_database.html', {'databases': existing_databases})
+
 
 @login_required
 def main_menu_view(request):
@@ -86,12 +93,14 @@ def main_menu_view(request):
             return redirect('logout')
     return render(request, 'blog/main_menu.html')
 
+
 @login_required
 def insert_links_view(request):
     if request.method == 'POST':
         link = request.POST.get('link')
         database.registrar_link(link)
     return render(request, 'blog/insert_links.html')
+
 
 @login_required
 def remove_data_view(request):
@@ -103,6 +112,7 @@ def remove_data_view(request):
         database.conexao.commit()
         database.desconectar()
     return render(request, 'blog/remove_data.html')
+
 
 @login_required
 def update_data_view(request):
@@ -118,6 +128,7 @@ def update_data_view(request):
         database.desconectar()
     return render(request, 'blog/update_data.html')
 
+
 @login_required
 def generate_document_view(request):
     if request.method == 'POST':
@@ -126,26 +137,31 @@ def generate_document_view(request):
         return render(request, 'blog/generate_document.html', {'result': document_result})
     return render(request, 'blog/generate_document.html')
 
+
 @login_required
 def post_detail_view(request, pk):
     post = get_object_or_404(Post, pk=pk)
     return render(request, 'blog/post_detail.html', {'post': post})
+
 
 @login_required
 def post_list_view(request):
     posts = Post.objects.filter(author=request.user).order_by('-date_posted')
     return render(request, 'blog/home.html', {'posts': posts})
 
+
 def is_valid_html(content):
-    return bool(re.match(r'<([A-Z][A-Z0-9]*)\b[^>]*>(.*?)</\1>', content, re.IGNORECASE))
+    # Verificar se a primeira linha do conteúdo contém uma tag HTML básica como <p>, <div>, <h1>, etc.
+    return bool(re.search(r'<(p|div|h1|h2|h3|h4|h5|h6|span|a|img|ul|ol|li|table|tr|td|th|strong|em|br|hr|blockquote)[^>]*>', content, re.IGNORECASE))
 
 @login_required
+@transaction.atomic
 def create_post_from_text(request):
     if request.method == 'POST':
         form = PostForm(request.POST)
         if form.is_valid():
             text = form.cleaned_data['content']
-            text = text.replace('\r\n', '\n')  # Normaliza quebras de linha
+            text = text.replace('\\r\\n', '\\n')  # Normaliza quebras de linha
             analyzer = SentimentAnalyzer()
 
             def process_text(queue, text):
@@ -160,22 +176,23 @@ def create_post_from_text(request):
 
             result_html, images = queue.get()
 
-            print(f"{result_html}\n\n\n\n HTML na view")
-
-            # if not is_valid_html(result_html):
-            #     return render(request, 'blog/post_form.html', {'form': form, 'error': 'Erro ao processar o texto. Tente novamente.'})
-
-            post = Post(
-                title=form.cleaned_data['title'],
-                content=result_html,
-                author=request.user,
-                date_posted=timezone.now()
-            )
-            post.save()
-            for image_path in images:
-                post.images.create(image=image_path)
-
-            return redirect('post-detail', pk=post.pk)
+            with lock:
+                # Salvar o post apenas se o HTML for válido
+                if is_valid_html(result_html):
+                    post = Post(
+                        title=form.cleaned_data['title'],
+                        content=result_html,
+                        author=request.user,
+                        date_posted=timezone.now()
+                    )
+                    post.save()
+                    for image_path in images:
+                        post.images.create(image=image_path)
+                    return redirect('post-detail', pk=post.pk)
+                else:
+                    # Lidar com falha na análise de texto
+                    return render(request, 'blog/post_form.html', {'form': form, 'error': 'Erro ao processar o texto. Tente novamente.'})
     else:
         form = PostForm()
     return render(request, 'blog/post_form.html', {'form': form})
+
