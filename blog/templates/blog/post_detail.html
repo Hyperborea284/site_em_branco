@@ -21,6 +21,10 @@
                 {% endif %}
                 <img src="{{ image.image.url }}" alt="Image related to the post">
             {% endfor %}
+            <form method="post">
+                {% csrf_token %}
+                <button type="submit" name="delete_post" class="btn btn-danger mt-3">Delete Post</button>
+            </form>
         </div>
     </article>
 {% endblock %}

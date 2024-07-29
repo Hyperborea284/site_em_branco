@@ -19,8 +19,10 @@ lock = Lock()
 @login_required
 def post_detail(request, pk):
     post = get_object_or_404(Post, pk=pk)
+    if request.method == 'POST' and 'delete_post' in request.POST:
+        post.delete()
+        return redirect('blog-home')  # Redirect to the list of posts after deletion
     return render(request, 'blog/post_detail.html', {'post': post})
-
 
 @login_required
 def post_create_view(request):
@@ -128,6 +130,15 @@ def update_data_view(request):
         database.desconectar()
     return render(request, 'blog/update_data.html')
 
+@login_required
+def post_list_view(request):
+    posts = Post.objects.filter(author=request.user).order_by('-date_posted')
+    if request.method == 'POST' and 'delete_post' in request.POST:
+        post_id = request.POST.get('post_id')
+        post = get_object_or_404(Post, id=post_id, author=request.user)
+        post.delete()
+        return redirect('blog-home')  # Redirect to the list of posts after deletion
+    return render(request, 'blog/home.html', {'posts': posts})
 
 @login_required
 def generate_document_view(request):
@@ -137,18 +148,13 @@ def generate_document_view(request):
         return render(request, 'blog/generate_document.html', {'result': document_result})
     return render(request, 'blog/generate_document.html')
 
-
 @login_required
 def post_detail_view(request, pk):
     post = get_object_or_404(Post, pk=pk)
+    if request.method == 'POST' and 'delete_post' in request.POST:
+        post.delete()
+        return redirect('blog-home')  # Redirect to the list of posts after deletion
     return render(request, 'blog/post_detail.html', {'post': post})
-
-
-@login_required
-def post_list_view(request):
-    posts = Post.objects.filter(author=request.user).order_by('-date_posted')
-    return render(request, 'blog/home.html', {'posts': posts})
-
 
 def is_valid_html(content):
     # Verificar se a primeira linha do conteúdo contém uma tag HTML básica como <p>, <div>, <h1>, etc.

@@ -14,6 +14,11 @@
                 <li class="list-group-item content-block">
                     <a href="{% url 'post-detail' post.pk %}" class="nav-link-post-title"><strong>{{ post.title }}</strong></a>
                     <p>{{ post.content|truncatewords:20 }}</p> <!-- Mostrando um resumo do conteúdo -->
+                    <form method="post" style="display: inline;">
+                        {% csrf_token %}
+                        <input type="hidden" name="post_id" value="{{ post.id }}">
+                        <button type="submit" name="delete_post" class="btn btn-danger btn-sm">Delete</button>
+                    </form>
                 </li>
             {% endfor %}
         </ul>
