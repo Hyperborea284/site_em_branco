@@ -9,7 +9,7 @@ from goose3 import Goose
 from datetime import datetime
 import subprocess
 import requests
-from backend.summarize import Summarizer
+from summarize import Summarizer
 
 class Main:
     def __init__(self, nome_banco='database.db'):

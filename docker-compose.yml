@@ -1,0 +1,55 @@
+version: '3.7'
+
+services:
+  django:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: django
+    ports:
+      - "8080:8080"
+    volumes:
+      - .:/app
+      - static:/app/static
+      - media:/app/media
+    environment:
+      - DJANGO_SETTINGS_MODULE=production_2024.settings
+      - SECRET_KEY=django-insecure-ey+vweu#^u6jin-d4p0&7*%)w!^qkoz1hh&v*y@$oy(q3*b((w
+      - DEBUG=False
+      - ALLOWED_HOSTS=ephor.com.br,localhost,127.0.0.1
+      - CSRF_TRUSTED_ORIGINS=https://ephor.com.br:443
+      - CSRF_COOKIE_SECURE=True
+      - SECURE_SSL_REDIRECT=True
+      - SESSION_COOKIE_SECURE=True
+    networks:
+      - ephor-network
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "200k"
+        max-file: "10"
+        labels: "production_2024_logs"
+
+  nginx:
+    build:
+      context: .
+      dockerfile: Dockerfile.nginx
+    ports:
+      - "8081:80"
+      - "8443:443"
+    volumes:
+      - static:/app/static
+      - media:/app/media
+    depends_on:
+      - django
+    container_name: nginx
+    networks:
+      - ephor-network
+
+volumes:
+  static:
+  media:
+
+networks:
+  ephor-network:
+    driver: bridge

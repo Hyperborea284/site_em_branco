@@ -12,3 +12,4 @@ nltk==3.8.1
 matplotlib==3.9.1
 uWSGI==2.0.26 
 whitenoise==6.7.0 
+seaborn==0.13.2

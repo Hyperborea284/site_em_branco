@@ -24,18 +24,15 @@ print("\n2 - Testar URLs de Administração")
 print("\n3 - Testar URLs de Account")
 choice = input("\nEscolha uma opção (1, 2, 3): ")
 
-
-choice = input("\nEscolha uma opção (1, 2, 3): ")
-
 print("\n1 - Localhost --- http://0.0.0.0:8080/accounts/login/")
-print("\n2 - Ephor     --- http://ephor/accounts/login/")
+print("\n2 - Ephor     --- https://ephor.com/accounts/login/")
 url_choice = input("\nEscolha a URL inicial (1, 2): ")
 
 # URL inicial para login
 if url_choice == '1':
     initial_url = 'http://0.0.0.0:8080/accounts/login/'
 elif url_choice == '2':
-    initial_url = 'http://ephor/accounts/login/'
+    initial_url = 'https://ephor.com/accounts/login/'
 else:
     print("Opção inválida. Usando URL padrão.")
     initial_url = 'http://0.0.0.0:8080/accounts/login/'

@@ -29,7 +29,7 @@ RUN python3 -m spacy download pt_core_news_sm
 RUN python3 -m spacy download es_core_news_sm
 RUN python3 -m spacy download en_core_web_sm
 
-# Copie o diretório backend para /app
+# Copie apenas o diretório backend para /app/backend para rodar o script loads.py
 COPY backend /app/backend
 
 # Baixe arquivos para nltk e tensorflow usando backend/loads.py
@@ -40,7 +40,7 @@ ENV PYTHONPATH="/app/backend"
 ENV TZ=America/Sao_Paulo
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
-# Copie o restante dos arquivos para /app
+# Copie o restante dos arquivos para /app (mantendo o backend intacto)
 COPY . /app/
 
 # Execute migrações e colete arquivos estáticos

@@ -1,0 +1,81 @@
+This is BibTeX, Version 0.99d (TeX Live 2022/dev/Debian)
+Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
+The top-level auxiliary file: 2024-08-16-11-52-51.aux
+The style file: abntex2-alf.bst
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Reallocated wiz_functions (elt_size=4) to 6000 items from 3000.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Reallocated wiz_functions (elt_size=4) to 9000 items from 6000.
+Database file #1: abntex2-options.bib
+Database file #2: tse_2024.bib
+Warning--entry type for "As_duas_preocupacoes_que_rondam_Carmen_Lucia_" isn't style-file defined
+--line 1 of file tse_2024.bib
+Warning--entry type for "Carmen_Lucia_tem_de_afastar_TSE_da_polarizaca" isn't style-file defined
+--line 12 of file tse_2024.bib
+Warning--entry type for "Carmen_Lucia_toma_posse_na_presidencia_do_TSE" isn't style-file defined
+--line 23 of file tse_2024.bib
+Warning--entry type for "Contra_o_virus_da_mentira_ha_o_remedio_da_inf" isn't style-file defined
+--line 34 of file tse_2024.bib
+Warning--entry type for "Mendonca_e_o_unico_ministro_do_STF_a_faltar_a" isn't style-file defined
+--line 45 of file tse_2024.bib
+Warning--entry type for "Pacheco_participa_da_posse_na_Carmen_Lucia_na" isn't style-file defined
+--line 56 of file tse_2024.bib
+Warning--entry type for "Quem_centraliza_poderes_em_uma_pessoa_chamase" isn't style-file defined
+--line 67 of file tse_2024.bib
+Warning--I didn't find a database entry for "Quem_centraliza_poderes_em_uma_pessoa_chamase;"
+Reallocated singl_function (elt_size=4) to 100 items from 50.
+Reallocated glb_str_ptr (elt_size=4) to 20 items from 10.
+Reallocated global_strs (elt_size=200001) to 20 items from 10.
+Reallocated glb_str_end (elt_size=4) to 20 items from 10.
++---------------------------------------------------------+
+| Estilo bibliográfico abntex2-alf.bst versão v-1.9.7           |
+| Em caso de dúvidas ou problemas com este estilo procure |
+| http://www.abntex.net.br/                               |
++---------------------------------------------------------+
+You've used 8 entries,
+            6714 wiz_defined-function locations,
+            1244 strings with 11860 characters,
+and the built_in function-call counts, 22877 in all, are:
+= -- 3314
+> -- 105
+< -- 925
++ -- 1007
+- -- 35
+* -- 1231
+:= -- 2673
+add.period$ -- 35
+call.type$ -- 8
+change.case$ -- 52
+chr.to.int$ -- 7
+cite$ -- 7
+duplicate$ -- 2967
+empty$ -- 464
+format.name$ -- 161
+if$ -- 4051
+int.to.chr$ -- 1
+int.to.str$ -- 0
+missing$ -- 129
+newline$ -- 50
+num.names$ -- 35
+pop$ -- 182
+preamble$ -- 1
+purify$ -- 24
+quote$ -- 0
+skip$ -- 3071
+stack$ -- 1
+substring$ -- 1168
+swap$ -- 1002
+text.length$ -- 7
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 0
+warning$ -- 0
+while$ -- 51
+width$ -- 0
+write$ -- 113
+(There were 8 warnings)

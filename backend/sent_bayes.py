@@ -18,6 +18,9 @@ from time import sleep
 from threading import Thread
 from queue import Queue
 
+# Importando as funções do script dist_normal.py para análise e geração de gráficos de distribuição
+from .dist_normal import analyze_data, detect_outliers, plot_distribution
+
 class SentimentAnalyzer:
     """
     Classe para análise de sentimentos em textos utilizando processamento de linguagem natural.
@@ -234,28 +237,41 @@ class SentimentAnalyzer:
         result = self.classificador.prob_classify(new_features)
         return np.array([result.prob(emotion) for emotion in self.emotions_funcs.keys()])
 
-    def plot_emotion_line_charts(self, scores_list: list, paragraph_end_indices: list, timestamp: str):
-        """Plota um gráfico de linhas da distribuição de emoções.
-
+    def plot_individual_emotion_charts(self, scores_list: list, paragraph_end_indices: list, timestamp: str):
+        """Plota gráficos de linhas individuais para cada sentimento e decide qual distribuição estatística é mais adequada.
+    
         Args:
             scores_list (list): Lista de pontuações de emoções.
-            paragraph_end_indices: (list): Lista indicando fim dos parágrafos.
+            paragraph_end_indices (list): Lista indicando fim dos parágrafos.
             timestamp (str): Carimbo de data/hora para nomear os arquivos salvos.
         """
-        print("Plotando gráfico de linhas de emoções...")
+        print("Plotando gráficos de linhas individuais para cada emoção...")
         emotions = list(self.emotions_funcs.keys())
-        fig, axes = plt.subplots(nrows=len(emotions), ncols=1, figsize=(10, 2 * len(emotions)))
+    
         for i, emotion in enumerate(emotions):
-            axes[i].plot([score[i] for score in scores_list], label=f'{emotion} pontuações')
+            fig, ax = plt.subplots(figsize=(10, 4))
+            ax.plot([score[i] for score in scores_list], label=f'{emotion} pontuações')
             for end_idx in paragraph_end_indices:
-                axes[i].axvline(x=end_idx, color='grey', linestyle='--', label='Fim do Parágrafo' if end_idx == paragraph_end_indices[0] else "")
-            axes[i].legend(loc='upper right')
-            axes[i].set_title(f'Evolução da Pontuação por Emoção: {emotion}')
-            axes[i].set_xlabel('Contagem de frases')
-            axes[i].set_ylabel('Pontuações')
-        plt.tight_layout()
-        plt.savefig(self.line_chart_path)
-        plt.close()
+                ax.axvline(x=end_idx, color='grey', linestyle='--', label='Fim do Parágrafo' if end_idx == paragraph_end_indices[0] else "")
+            ax.legend(loc='upper right')
+            ax.set_title(f'Evolução da Pontuação: {emotion}')
+            ax.set_xlabel('Contagem de frases')
+            ax.set_ylabel('Pontuações')
+            plt.tight_layout()
+    
+            # Salvando a imagem de pontuação para cada emoção
+            emotion_image_path = self.generated_images_dir / f'{emotion}_score_{timestamp}.png'
+            plt.savefig(emotion_image_path)
+            plt.close()
+    
+            # Analisando os dados e gerando o gráfico de distribuição mais adequado
+            emotion_scores = [score[i] for score in scores_list]
+            nature = analyze_data(emotion_scores)  # Identificação da característica da distribuição
+            outliers, lower_bound, upper_bound = detect_outliers(emotion_scores)  # Detecção de outliers
+            
+            # Incluindo o caminho de salvamento correto para o gráfico de distribuição
+            distribution_image_path = self.generated_images_dir / f'{emotion}_distribution_{timestamp}.png'
+            plot_distribution(emotion_scores, f'{emotion} ({nature})', outliers, lower_bound, upper_bound, distribution_image_path)  # Geração do gráfico com save_path
 
     def plot_pie_chart(self, scores_list: list, timestamp: str):
         """Plota um gráfico de pizza da distribuição de emoções.
@@ -271,6 +287,7 @@ class SentimentAnalyzer:
         plt.figure(figsize=(8, 8))
         plt.pie(sizes, labels=labels, colors=colors, autopct='%1.1f%%', startangle=140)
         plt.title('Proporção de Cada Sentimento')
+        self.pie_chart_path = self.generated_images_dir / f'pie_chart_{timestamp}.png'
         plt.savefig(self.pie_chart_path)
         plt.close()
 
@@ -289,12 +306,13 @@ class SentimentAnalyzer:
         plt.title('Frequência de Emoções Detectadas')
         plt.xlabel('Emoção')
         plt.ylabel('Frequência')
+        self.bar_chart_path = self.generated_images_dir / f'bar_chart_{timestamp}.png'
         plt.savefig(self.bar_chart_path)
         plt.close()
 
     def generate_html_content(self, timestamp: str, paragraphs: list, sentences: list) -> str:
         """Cria uma visualização HTML dos dados analisados, destacando o final de cada frase e incluindo numeração.
-    
+
         Args:
             timestamp (str): Carimbo de data/hora da análise.
             paragraphs (list): Lista de parágrafos do texto analisado.
@@ -302,11 +320,7 @@ class SentimentAnalyzer:
         """       
         print("Gerando conteúdo HTML...")
         base_path = settings.MEDIA_URL + 'generated_images/'
-        self.pie_chart_path = Path('generated_images') / f'pie_chart_{timestamp}.png'
-        self.bar_chart_path = Path('generated_images') / f'bar_chart_{timestamp}.png'
-        self.line_chart_path = Path('generated_images') / f'emotion_scores_{timestamp}.png'
-
-        # Constrói o conteúdo HTML do texto analisado com marcações de fim de frase e numeração
+        
         html_paragraphs = []
         sentence_counter = 1
         for paragraph in paragraphs:
@@ -317,7 +331,6 @@ class SentimentAnalyzer:
                     sentence_counter += 1
             html_paragraphs.append(f'<p>{marked_paragraph}</p>')
 
-        # Junta os elementos de html_paragraphs em uma string única
         self.html_content_paragraphs = ''.join(html_paragraphs)
         
         # Constrói o conteúdo HTML do texto
@@ -329,6 +342,27 @@ class SentimentAnalyzer:
             <h1>Número de Parágrafos e Frases</h1>
             <div style='border:1px solid black; padding:10px;'>Parágrafos: {len(paragraphs)}, Frases: {len(sentences)}</div>
         """
+        
+        # Adiciona gráficos de emoções e suas distribuições
+        emotions = list(self.emotions_funcs.keys())
+        for emotion in emotions:
+            self.html_content += f"""
+                <h2>{emotion.capitalize()}</h2>
+                <div style='border:1px solid black; padding:10px;'>
+                    <img src='{base_path}{emotion}_score_{timestamp}.png' alt='Gráfico de linhas para {emotion}'>
+                    <img src='{base_path}{emotion}_distribution_{timestamp}.png' alt='Distribuição Normal para {emotion}'>
+                </div>
+            """
+
+        # Inclui os gráficos de pizza e barras no HTML
+        self.html_content += f"""
+            <h1>Gráficos Gerais</h1>
+            <div style='border:1px solid black; padding:10px;'>
+                <img src='{base_path}pie_chart_{timestamp}.png' alt='Gráfico de pizza de sentimentos'>
+                <img src='{base_path}bar_chart_{timestamp}.png' alt='Gráfico de barras de sentimentos'>
+            </div>
+        """
+
         return self.html_content
 
     def execute_analysis_text(self, text: str) -> tuple:
@@ -341,24 +375,27 @@ class SentimentAnalyzer:
         self.reset_analyzer()
         print("Executando análise de texto...")
         timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-        self.pie_chart_path = self.generated_images_dir / f'pie_chart_{timestamp}.png'
-        self.bar_chart_path = self.generated_images_dir / f'bar_chart_{timestamp}.png'
-        self.line_chart_path = self.generated_images_dir / f'emotion_scores_{timestamp}.png'
+        
+        # Processamento do texto e obtenção de parágrafos e frases
         paragraphs, sentences = self.process_text(text)
         scores_list, paragraph_end_indices = self.analyze_paragraphs(paragraphs)
-        self.plot_emotion_line_charts(scores_list, paragraph_end_indices, timestamp)
+        
+        # Plotar gráficos individuais para cada emoção com decisão automática da distribuição
+        self.plot_individual_emotion_charts(scores_list, paragraph_end_indices, timestamp)
+        
+        # Geração de gráficos gerais de pizza e barras
         self.plot_pie_chart(scores_list, timestamp)
         self.plot_bar_chart(scores_list, timestamp)
 
-        # Loop para garantir a geração do HTML válido
+        # Geração do HTML
         self.html_content, relative_paths = None, []
         attempts = 0
         max_attempts = 5
-
+        
         def generate_html_content_process(queue, timestamp, paragraphs, sentences):
             html_content = self.generate_html_content(timestamp, paragraphs, sentences)
             queue.put(html_content)
-
+        
         while attempts < max_attempts:
             print(f"Tentativa {attempts + 1} de {max_attempts} para gerar HTML...")
             queue = Queue()
@@ -367,16 +404,15 @@ class SentimentAnalyzer:
             thread.join()
             self.html_content = queue.get()
             print(f"{self.html_content}\n\n\n\n HTML no backend")
-
+        
             if self.is_valid_html(self.html_content):
                 print("HTML válido gerado.")
                 break
             attempts += 1
             sleep(2 * (attempts + 1))  # Pausa progressiva para reativação
-
+        
         if not self.is_valid_html(self.html_content):
             print("Erro ao gerar HTML válido após múltiplas tentativas.")
             raise ValueError("Erro ao gerar HTML válido. Tente novamente.")
-
-        relative_paths = [str(self.pie_chart_path), str(self.bar_chart_path), str(self.line_chart_path)]
+        
         return self.html_content, relative_paths

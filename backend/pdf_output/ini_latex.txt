@@ -1,0 +1,87 @@
+\documentclass[
+   article,       
+   12pt,          
+   oneside,       
+   a4paper,       
+   english,       
+   brazil,        
+   sumario=tradicional
+   ]{abntex2}
+
+\usepackage{lmodern}       
+\usepackage[T1]{fontenc}   
+\usepackage[utf8]{inputenc}
+\usepackage{indentfirst}   
+\usepackage{nomencl}       
+\usepackage{color}         
+\usepackage{graphicx}      
+\usepackage{microtype}     
+\usepackage{background}
+\usepackage{datetime}
+\usepackage{lipsum} 
+\usepackage[brazilian,hyperpageref]{backref}
+\usepackage[alf]{abntex2cite}
+
+\newdateformat{mydate}{\THEDAY\space de \monthname[\THEMONTH], \THEYEAR}
+
+\backgroundsetup{
+   scale=1,
+   angle=0,
+   opacity=1,
+   color=black,
+   contents={\begin{tikzpicture}[remember picture, overlay]
+      \node at ([xshift=-2cm,yshift=-2cm] current page.north east)
+            {\includegraphics[width = 3cm]{logo_02.png}}
+       node at ([xshift=2cm,yshift=-2cm] current page.north west)
+            {\includegraphics[width = 3cm]{conf.png}};
+     \end{tikzpicture}}
+}
+
+\renewcommand{\backrefpagesname}{Citado na(s) página(s):~}
+\renewcommand{\backref}{}
+\renewcommand*{\backrefalt}[4]{
+   \ifcase #1
+      Nenhuma citação no texto.
+   \or
+      Citado na página #2.
+   \else
+      Citado #1 vezes nas páginas #2.
+   \fi}
+
+\titulo{{Correntes da Antropologia}}
+\tituloestrangeiro{ }
+\autor{{Ephor - Linguística Computacional }}
+\local{{Maringá - Brasil \url{https://www.ephor.com.br/}}}
+\data{{\today\space \currenttime}}
+
+\definecolor{blue}{RGB}{41,5,195}
+\makeatletter
+\hypersetup{
+      pdftitle={\@title}, 
+      pdfauthor={\@author},
+      pdfsubject={Correntes da Antropologia},
+       pdfcreator={LaTeX with abnTeX2},
+      pdfkeywords={abnt}{latex}{abntex}{abntex2}{atigo científico}, 
+      colorlinks=true,   
+      linkcolor=blue,    
+      citecolor=blue,    
+      filecolor=magenta, 
+      urlcolor=blue,
+      bookmarksdepth=4
+}
+\makeatother
+\makeindex
+\setlrmarginsandblock{3cm}{3cm}{*}
+\setulmarginsandblock{3cm}{3cm}{*}
+\checkandfixthelayout
+\setlength{\parindent}{1.3cm}
+\setlength{\parskip}{0.2cm}
+\SingleSpacing
+
+\begin{document}
+
+\selectlanguage{brazil}
+\frenchspacing 
+\maketitle
+
+\textual
