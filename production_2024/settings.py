@@ -79,8 +79,15 @@ WSGI_APPLICATION = 'production_2024.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': os.getenv('DB_NAME', 'django_db'),
+        'USER': os.getenv('DB_USER', 'django_user'),
+        'PASSWORD': os.getenv('DB_PASSWORD', 'secure_password'),
+        'HOST': os.getenv('DB_HOST', 'db'),  # Conecta-se ao serviço 'db' definido no Docker Compose
+        'PORT': os.getenv('DB_PORT', '3306'),  # Porta interna do MySQL dentro do contêiner
+        'OPTIONS': {
+            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'"
+        },
     }
 }
 
@@ -92,7 +99,7 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'
     },
     {
         'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
