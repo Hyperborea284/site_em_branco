@@ -21,8 +21,15 @@ services:
       - CSRF_COOKIE_SECURE=True
       - SECURE_SSL_REDIRECT=True
       - SESSION_COOKIE_SECURE=True
+      - DB_NAME=django_db
+      - DB_USER=django_user
+      - DB_PASSWORD=secure_password
+      - DB_HOST=db
+      - DB_PORT=3306  # Django se conecta à porta padrão do MySQL dentro do contêiner
     networks:
       - ephor-network
+    depends_on:
+      - db
     logging:
       driver: "json-file"
       options:
@@ -46,9 +53,26 @@ services:
     networks:
       - ephor-network
 
+  db:
+    image: mysql:8.0  # Alterado para MySQL 8.0 para compatibilidade com Django
+    container_name: db
+    restart: always
+    environment:
+      MYSQL_DATABASE: django_db
+      MYSQL_USER: django_user
+      MYSQL_PASSWORD: secure_password
+      MYSQL_ROOT_PASSWORD: root_password
+    ports:
+      - "3307:3306"  # Porta externa 3307 mapeada para a porta MySQL interna 3306
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - ephor-network
+
 volumes:
   static:
   media:
+  db_data:
 
 networks:
   ephor-network:

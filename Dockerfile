@@ -6,9 +6,9 @@ ENV PYTHONUNBUFFERED=1
 # Defina o diretório de trabalho para /app
 WORKDIR /app
 
-# Atualize pacotes e instale dependências necessárias
+# Atualize pacotes e instale dependências necessárias, incluindo netcat-openbsd
 RUN apt-get update && \
-    apt-get install -y default-libmysqlclient-dev libicu-dev libharfbuzz-dev libfribidi-dev python3-tk r-base nano && \
+    apt-get install -y default-libmysqlclient-dev libicu-dev libharfbuzz-dev libfribidi-dev python3-tk r-base nano netcat-openbsd && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
@@ -43,10 +43,9 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 # Copie o restante dos arquivos para /app (mantendo o backend intacto)
 COPY . /app/
 
-# Execute migrações e colete arquivos estáticos
-RUN python3 manage.py makemigrations
-RUN python3 manage.py migrate
-RUN python3 manage.py collectstatic --noinput
+# Copie o entrypoint.sh e defina permissões de execução
+COPY entrypoint.sh /app/entrypoint.sh
+RUN chmod +x /app/entrypoint.sh
 
 # Configure os diretórios e permissões
 RUN mkdir -p /var/log/uwsgi
@@ -56,5 +55,5 @@ RUN chmod -R 777 /var/log/uwsgi /app
 # Exponha a porta 8080 para uwsgi
 EXPOSE 8080
 
-# Comando de entrada para iniciar uWSGI
-CMD ["sh", "-c", "uwsgi --http :8080 --module production_2024.wsgi --enable-threads"]
+# Defina o entrypoint para o script de inicialização com o shell especificado
+ENTRYPOINT ["/bin/sh", "/app/entrypoint.sh"]
