@@ -17,6 +17,8 @@ import re
 from time import sleep
 from threading import Thread
 from queue import Queue
+import subprocess
+
 
 # Importando as funções do script dist_normal.py para análise e geração de gráficos de distribuição
 from .dist_normal import analyze_data, detect_outliers, plot_distribution
@@ -28,6 +30,20 @@ class SentimentAnalyzer:
     def __init__(self):
         """Inicializa o analisador de sentimentos, baixando recursos necessários do NLTK."""
         self.reset_analyzer()
+
+    def executar_script_r(self):
+        # Caminho dentro do container Docker para script R e diretório de saída
+        script_path = "/app/backend/nlp.R"
+        output_path = "/app/media/generated_images"
+
+        # Executa o script R dentro do container R
+        subprocess.run([
+            'docker', 'run', '--rm',
+            '-v', '/app/backend/nlp.R:' + script_path,
+            '-v', '/app/media/generated_images:' + output_path,
+            'r-container',  # Nome do serviço Docker para o container R
+            'Rscript', script_path
+        ])
 
     def reset_analyzer(self):
         """Reinicializa o analisador de sentimentos."""

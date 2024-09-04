@@ -6,14 +6,11 @@ ENV PYTHONUNBUFFERED=1
 # Defina o diretório de trabalho para /app
 WORKDIR /app
 
-# Atualize pacotes e instale dependências necessárias, incluindo netcat-openbsd
+# Atualize pacotes e instale dependências necessárias, excluindo R e LaTeX
 RUN apt-get update && \
-    apt-get install -y default-libmysqlclient-dev libicu-dev libharfbuzz-dev libfribidi-dev python3-tk r-base nano netcat-openbsd && \
+    apt-get install -y default-libmysqlclient-dev libicu-dev libharfbuzz-dev libfribidi-dev python3-tk nano netcat-openbsd && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
-
-# Instale pacotes R necessários
-RUN Rscript -e "install.packages(c('tidyverse', 'syuzhet', 'textshaping', 'ragg', 'tm', 'SnowballC', 'wordcloud', 'RColorBrewer', 'syuzhet', 'ggplot2', 'magrittr', 'quanteda', 'rainette'), repos='http://cran.us.r-project.org')"
 
 # Atualize pip e instale pacotes Python
 RUN pip3 install --upgrade pip && pip3 install mysqlclient numpy

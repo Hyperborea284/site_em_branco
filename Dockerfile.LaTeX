@@ -1,0 +1,15 @@
+# Use uma imagem base Debian
+FROM debian:bookworm
+
+# Instala os pacotes TeX Live necessários, incluindo abnTeX2 e suporte ao português
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+    texlive-full \
+    texlive-publishers \
+    texlive-lang-portuguese \
+    texlive-latex-extra \
+    texlive-fonts-recommended && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+CMD ["bash"]

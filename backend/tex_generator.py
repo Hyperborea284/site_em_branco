@@ -160,33 +160,46 @@ class TexFileGenerator:
         entry_keys = re.findall(r'@online{([^,]+),', bib_content)
         return entry_keys
 
-    def generate_pdf_from_tex(self, tex_file):
-        tex_script = os.path.join(os.path.dirname(__file__), 'tex_studio.sh')
+    def generate_pdf_from_tex(tex_file):
+        # Caminho dentro do container Docker para diretório de entrada e saída de PDFs
+        tex_path = "/app/backend/pdf_output"
+        output_path = "/app/backend/pdf_output"
+    
+        # Executa o LaTeX dentro do container LaTeX para gerar o PDF
+        subprocess.run([
+            'docker', 'run', '--rm',
+            '-v', '/app/backend/pdf_output:' + tex_path,
+            'latex-container',  # Nome do serviço Docker para o container LaTeX
+            'latexmk', '-pdf', tex_path + '/' + tex_file
+        ])
 
-        try:
-            subprocess.run([tex_script, tex_file], check=True)
-        except subprocess.CalledProcessError as e:
-            print(f"Error: The subprocess returned a non-zero exit code: {e.returncode}")
-            return
+    # def generate_pdf_from_tex(self, tex_file):
+    #     tex_script = os.path.join(os.path.dirname(__file__), 'tex_studio.sh')
 
-        pdf_file = os.path.splitext(os.path.basename(tex_file))[0] + '.pdf'
-        pdf_file_path = os.path.join(self.base_dir, pdf_file)
+    #     try:
+    #         subprocess.run([tex_script, tex_file], check=True)
+    #     except subprocess.CalledProcessError as e:
+    #         print(f"Error: The subprocess returned a non-zero exit code: {e.returncode}")
+    #         return
 
-        shutil.move(tex_file, os.path.join(self.base_dir, os.path.basename(tex_file)))
-        shutil.move(pdf_file, pdf_file_path)
+    #     pdf_file = os.path.splitext(os.path.basename(tex_file))[0] + '.pdf'
+    #     pdf_file_path = os.path.join(self.base_dir, pdf_file)
 
-        if os.path.exists(pdf_file_path):
-            print(f"PDF file generated: {pdf_file_path}")
-        else:
-            print(f"Error: The PDF file {pdf_file_path} does not exist.")
+    #     shutil.move(tex_file, os.path.join(self.base_dir, os.path.basename(tex_file)))
+    #     shutil.move(pdf_file, pdf_file_path)
 
-        temp_file_prefix = os.path.splitext(os.path.basename(tex_file))[0]
-        temp_files = [f for f in os.listdir(self.base_dir) if f.startswith(temp_file_prefix)]
+    #     if os.path.exists(pdf_file_path):
+    #         print(f"PDF file generated: {pdf_file_path}")
+    #     else:
+    #         print(f"Error: The PDF file {pdf_file_path} does not exist.")
 
-        for temp_file in temp_files:
-            temp_file_path = os.path.join(self.base_dir, temp_file)
-            if os.path.exists(temp_file_path):
-                os.remove(temp_file_path)
+    #     temp_file_prefix = os.path.splitext(os.path.basename(tex_file))[0]
+    #     temp_files = [f for f in os.listdir(self.base_dir) if f.startswith(temp_file_prefix)]
+
+    #     for temp_file in temp_files:
+    #         temp_file_path = os.path.join(self.base_dir, temp_file)
+    #         if os.path.exists(temp_file_path):
+    #             os.remove(temp_file_path)
 
 def main(db_name):
     tex_generator = TexFileGenerator(db_name)

@@ -25,7 +25,7 @@ services:
       - DB_USER=django_user
       - DB_PASSWORD=secure_password
       - DB_HOST=db
-      - DB_PORT=3306  # Django se conecta à porta padrão do MySQL dentro do contêiner
+      - DB_PORT=3306
     networks:
       - ephor-network
     depends_on:
@@ -54,7 +54,7 @@ services:
       - ephor-network
 
   db:
-    image: mysql:8.0  # Alterado para MySQL 8.0 para compatibilidade com Django
+    image: mysql:8.0
     container_name: db
     restart: always
     environment:
@@ -63,11 +63,38 @@ services:
       MYSQL_PASSWORD: secure_password
       MYSQL_ROOT_PASSWORD: root_password
     ports:
-      - "3307:3306"  # Porta externa 3307 mapeada para a porta MySQL interna 3306
+      - "3307:3306"
     volumes:
       - db_data:/var/lib/mysql
     networks:
       - ephor-network
+
+  r-container:
+    build:
+      context: .
+      dockerfile: Dockerfile.R
+    container_name: r-container
+    volumes:
+      # Monta o script R e o diretório de saída de imagens dentro do container
+      - ./backend/nlp.R:/app/backend/nlp.R
+      - ./media/generated_images:/app/media/generated_images
+    networks:
+      - ephor-network
+    depends_on:
+      - django
+
+  latex-container:
+    build:
+      context: .
+      dockerfile: Dockerfile.LaTeX
+    container_name: latex-container
+    volumes:
+      # Monta o diretório de entrada e saída para arquivos LaTeX dentro do container
+      - ./backend/pdf_output:/app/backend/pdf_output
+    networks:
+      - ephor-network
+    depends_on:
+      - django
 
 volumes:
   static:
