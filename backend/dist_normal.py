@@ -35,19 +35,40 @@ def detect_outliers(data):
     outliers = data[(data < lower_bound) | (data > upper_bound)]
     return outliers, lower_bound, upper_bound
 
+# Função para normalizar os dados centrando em torno da média
+def normalize_to_center(data):
+    """
+    Normaliza os dados de forma que os valores se distribuam em torno da média.
+
+    Args:
+        data (list or np.array): Lista ou array de dados numéricos a serem normalizados.
+
+    Returns:
+        np.array: Dados normalizados centrados na média.
+    """
+    data = np.array(data)
+    mean = np.mean(data)  # Calcula a média dos dados
+    centered_data = data - mean  # Centraliza os dados
+    max_abs = np.max(np.abs(centered_data))  # Encontra o máximo absoluto para normalizar
+    if max_abs == 0:
+        return centered_data  # Retorna os dados sem normalizar se max_abs for zero
+    return centered_data / max_abs  # Normaliza para o intervalo [-1, 1] centrado na média
+
 # Função para calcular e plotar a distribuição normal e a curtose para cada conjunto de dados
 def plot_distribution(data, title, outliers, lower_bound, upper_bound, save_path):
     """Plota a distribuição dos dados, destacando a natureza e salvando o gráfico."""
-    mean = np.mean(data)
-    std_dev = np.std(data)
-    x = np.linspace(min(data), max(data), 1000)
+    # Normaliza os dados antes de ploteá-los
+    normalized_data = normalize_to_center(data)
+    mean = np.mean(normalized_data)
+    std_dev = np.std(normalized_data)
+    x = np.linspace(min(normalized_data), max(normalized_data), 1000)
     y = norm.pdf(x, mean, std_dev)
 
     plt.figure(figsize=(12, 8))
-    plt.hist(data, bins=30, density=True, alpha=0.6, color='g', label='Dados')
+    plt.hist(normalized_data, bins=30, density=True, alpha=0.6, color='g', label='Dados Normalizados')
     plt.plot(x, y, label='Distribuição Normal', color='darkred')
 
-    sns.kdeplot(data, color='blue', label='Estimativa de Densidade de Kernel', linestyle='--')
+    sns.kdeplot(normalized_data, color='blue', label='Estimativa de Densidade de Kernel', linestyle='--')
 
     for i in range(1, 4):
         plt.axvline(mean - i*std_dev, color='black', linestyle='dashed', linewidth=1)
@@ -67,9 +88,9 @@ def plot_distribution(data, title, outliers, lower_bound, upper_bound, save_path
     plt.text(mean - 3*std_dev, max(y)*0.01, r'$\mu - 3\sigma$', horizontalalignment='center', fontsize=12)
     plt.text(mean + 3*std_dev, max(y)*0.01, r'$\mu + 3\sigma$', horizontalalignment='center', fontsize=12)
 
-    kurt = kurtosis(data, fisher=False)
-    skewness = skew(data)
-    _, p_value = shapiro(data)
+    kurt = kurtosis(normalized_data, fisher=False)
+    skewness = skew(normalized_data)
+    _, p_value = shapiro(normalized_data)
 
     plt.title(f'{title}\nCurtose: {kurt:.2f}, Assimetria: {skewness:.2f}, p-valor do Shapiro-Wilk: {p_value:.4f}')
     plt.xlabel('Valor')
