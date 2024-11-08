@@ -6,20 +6,30 @@ ENV PYTHONUNBUFFERED=1
 # Defina o diretório de trabalho para /app
 WORKDIR /app
 
-# Atualize pacotes e instale dependências necessárias, excluindo R e LaTeX
+# Atualize os pacotes e instale as dependências necessárias, excluindo R e LaTeX
 RUN apt-get update && \
-    apt-get install -y default-libmysqlclient-dev libicu-dev libharfbuzz-dev libfribidi-dev python3-tk nano netcat-openbsd && \
+    apt-get install -y \
+    default-libmysqlclient-dev \
+    default-mysql-client \
+    libicu-dev \
+    libharfbuzz-dev \
+    libfribidi-dev \
+    python3-tk \
+    nano \
+    netcat-openbsd && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-# Atualize pip e instale pacotes Python
-RUN pip3 install --upgrade pip && pip3 install mysqlclient numpy
+# Atualize o pip e instale os pacotes Python necessários
+RUN pip3 install --upgrade pip && \
+    pip3 install mysqlclient numpy
 
 # Copie requirements.txt e .env para o diretório /app
-COPY requirements.txt .env /app/
+COPY ./requirements.txt /app/requirements.txt
+COPY .env /app/env
 
 # Instale dependências do projeto
-RUN pip3 install --no-cache-dir -r requirements.txt
+RUN pip3 install --no-cache-dir -r /app/requirements.txt
 
 # Baixe modelos de linguagem Spacy
 RUN python3 -m spacy download pt_core_news_sm

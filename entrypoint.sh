@@ -1,20 +1,17 @@
-#!/bin/sh
+#!/bin/bash
 
-# Espera o serviço do banco de dados estar disponível antes de rodar as migrações
-echo "Aguardando o banco de dados..."
+# Função para esperar pelo MySQL
+wait_for_mysql() {
+  echo "Aguardando o MySQL iniciar..."
+  until mysqladmin ping -h "$DB_HOST" -P "$DB_PORT" --silent; do
+    sleep 1
+  done
+  echo "MySQL está pronto e aceitando conexões."
+}
 
-# Um loop que continua tentando conectar até que o DB esteja disponível
-while ! nc -z $DB_HOST $DB_PORT; do
-  sleep 1
-done
+# Esperar pelo MySQL antes de iniciar o Django
+wait_for_mysql
 
-echo "Banco de dados está disponível. Aplicando migrações..."
-
-# Executa as migrações
-python3 manage.py migrate
-
-# Coleta os arquivos estáticos
-python3 manage.py collectstatic --noinput
-
-# Executa o uWSGI
-uwsgi --http :8080 --module production_2024.wsgi --enable-threads
+# Iniciar o servidor Django com uWSGI
+echo "Iniciando Django com uWSGI..."
+uwsgi --ini /app/uwsgi.ini

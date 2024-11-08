@@ -1,0 +1,56 @@
+server {
+    listen 80;
+    server_name ephor.com.br;
+
+    # Regra para bloquear o acesso a arquivos .env
+    location ~ /\.env {
+        deny all;
+        return 404;
+    }
+
+    location / {
+        proxy_pass http://django:8080;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    location /static/ {
+        alias /app/static/;
+    }
+
+    location /media/ {
+        alias /app/media/;
+    }
+}
+
+server {
+    listen 443 ssl;
+    server_name ephor.com.br;
+
+    ssl_certificate /etc/nginx/fullchain.pem;
+    ssl_certificate_key /etc/nginx/privkey.pem;
+
+    # Regra para bloquear o acesso a arquivos .env
+    location ~ /\.env {
+        deny all;
+        return 404;
+    }
+
+    location / {
+        proxy_pass http://django:8080;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    location /static/ {
+        alias /app/static/;
+    }
+
+    location /media/ {
+        alias /app/media/;
+    }
+}

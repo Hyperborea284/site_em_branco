@@ -1,4 +1,4 @@
-version: '3.7'
+version: '3.8'
 
 services:
   django:
@@ -7,7 +7,7 @@ services:
       dockerfile: Dockerfile
     container_name: django
     ports:
-      - "8080:8080"
+      - "8081:8080"  # Porta externa 8081 para acessar o container Django na porta 8080
     volumes:
       - .:/app
       - static:/app/static
@@ -16,8 +16,8 @@ services:
       - DJANGO_SETTINGS_MODULE=production_2024.settings
       - SECRET_KEY=django-insecure-ey+vweu#^u6jin-d4p0&7*%)w!^qkoz1hh&v*y@$oy(q3*b((w
       - DEBUG=False
-      - ALLOWED_HOSTS=ephor.com.br,localhost,127.0.0.1
-      - CSRF_TRUSTED_ORIGINS=https://ephor.com.br:443
+      - ALLOWED_HOSTS=ephor.com.br,localhost,127.0.0.1,192.168.0.10,172.30.0.3
+      - CSRF_TRUSTED_ORIGINS=https://ephor.com.br
       - CSRF_COOKIE_SECURE=True
       - SECURE_SSL_REDIRECT=True
       - SESSION_COOKIE_SECURE=True
@@ -27,7 +27,8 @@ services:
       - DB_HOST=db
       - DB_PORT=3306
     networks:
-      - ephor-network
+      ephor-network:
+        ipv4_address: 172.30.0.3
     depends_on:
       - db
     logging:
@@ -36,22 +37,6 @@ services:
         max-size: "200k"
         max-file: "10"
         labels: "production_2024_logs"
-
-  nginx:
-    build:
-      context: .
-      dockerfile: Dockerfile.nginx
-    ports:
-      - "8081:80"
-      - "8443:443"
-    volumes:
-      - static:/app/static
-      - media:/app/media
-    depends_on:
-      - django
-    container_name: nginx
-    networks:
-      - ephor-network
 
   db:
     image: mysql:8.0
@@ -63,38 +48,12 @@ services:
       MYSQL_PASSWORD: secure_password
       MYSQL_ROOT_PASSWORD: root_password
     ports:
-      - "3307:3306"
+      - "3306:3306"
     volumes:
       - db_data:/var/lib/mysql
     networks:
-      - ephor-network
-
-  r-container:
-    build:
-      context: .
-      dockerfile: Dockerfile.R
-    container_name: r-container
-    volumes:
-      # Monta o script R e o diretório de saída de imagens dentro do container
-      - ./backend/nlp.R:/app/backend/nlp.R
-      - ./media/generated_images:/app/media/generated_images
-    networks:
-      - ephor-network
-    depends_on:
-      - django
-
-  latex-container:
-    build:
-      context: .
-      dockerfile: Dockerfile.LaTeX
-    container_name: latex-container
-    volumes:
-      # Monta o diretório de entrada e saída para arquivos LaTeX dentro do container
-      - ./backend/pdf_output:/app/backend/pdf_output
-    networks:
-      - ephor-network
-    depends_on:
-      - django
+      ephor-network:
+        ipv4_address: 172.30.0.2
 
 volumes:
   static:
@@ -104,3 +63,7 @@ volumes:
 networks:
   ephor-network:
     driver: bridge
+    attachable: true
+    ipam:
+      config:
+        - subnet: 172.30.0.0/16

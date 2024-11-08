@@ -23,10 +23,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = ['localhost', 'ephor.com.br', '0.0.0.0', '127.0.0.1', '179.233.31.174']
-
+ALLOWED_HOSTS = ['ephor.com.br', 'www.ephor.com.br', '127.0.0.1', '192.168.0.14']
 # Application definition
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -80,14 +79,11 @@ WSGI_APPLICATION = 'production_2024.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': os.getenv('DB_NAME', 'django_db'),
-        'USER': os.getenv('DB_USER', 'django_user'),
-        'PASSWORD': os.getenv('DB_PASSWORD', 'secure_password'),
-        'HOST': os.getenv('DB_HOST', 'db'),  # Conecta-se ao serviço 'db' definido no Docker Compose
-        'PORT': os.getenv('DB_PORT', '3306'),  # Porta interna do MySQL dentro do contêiner
-        'OPTIONS': {
-            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'"
-        },
+        'NAME': 'django_db',
+        'USER': 'django_user',
+        'PASSWORD': 'secure_password',
+        'HOST': 'db',
+        'PORT': '3306',
     }
 }
 

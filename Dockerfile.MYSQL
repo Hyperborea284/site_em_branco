@@ -1,0 +1,23 @@
+# Use a imagem oficial do MySQL como base
+FROM mysql:8.0
+
+# Configure as variáveis de ambiente do banco de dados
+ENV MYSQL_ROOT_PASSWORD=root_password
+ENV MYSQL_DATABASE=django_db
+ENV MYSQL_USER=django_user
+ENV MYSQL_PASSWORD=secure_password
+
+RUN mkdir -p /var/run/mysqld && \
+    chown mysql:mysql /var/run/mysqld
+
+# Expor a porta 3306
+EXPOSE 3306
+
+# Expor a porta 33060
+EXPOSE 33060
+
+# Copiar o script de inicialização (opcional)
+#COPY init-db.sql /docker-entrypoint-initdb.d/
+
+# Comando para iniciar o banco de dados
+CMD ["mysqld"]
