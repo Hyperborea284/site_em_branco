@@ -1,13 +1,42 @@
 version: '3.8'
 
 services:
+  db:
+    image: mysql:8.0
+    container_name: db
+    restart: always
+    environment:
+      MYSQL_DATABASE: django_db
+      MYSQL_USER: django_user
+      MYSQL_PASSWORD: secure_password
+      MYSQL_ROOT_PASSWORD: root_password
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      ephor-network:
+        ipv4_address: 172.30.0.2
+    # ---------------------------------------
+    # Healthcheck para MySQL:
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    # ---------------------------------------
+
+  ###################################################
+  # Django (produção) - preservando configuração
+  ###################################################
   django:
     build:
       context: .
       dockerfile: Dockerfile
     container_name: django
     ports:
-      - "8081:8080"  # Porta externa 8081 para acessar o container Django na porta 8080
+      - "8081:8080"  # Porta externa 8081 para acessar uWSGI ou runserver na 8080
     volumes:
       - .:/app
       - static:/app/static
@@ -30,7 +59,8 @@ services:
       ephor-network:
         ipv4_address: 172.30.0.3
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     logging:
       driver: "json-file"
       options:
@@ -38,22 +68,46 @@ services:
         max-file: "10"
         labels: "production_2024_logs"
 
-  db:
-    image: mysql:8.0
-    container_name: db
-    restart: always
-    environment:
-      MYSQL_DATABASE: django_db
-      MYSQL_USER: django_user
-      MYSQL_PASSWORD: secure_password
-      MYSQL_ROOT_PASSWORD: root_password
+  ###################################################
+  # Django-dev (desenvolvimento)
+  ###################################################
+  django-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile-dev
+    container_name: django-dev
     ports:
-      - "3306:3306"
+      - "8000:8000"  # Porta externa 8000 para desenvolvimento
     volumes:
-      - db_data:/var/lib/mysql
+      - .:/app
+      - static:/app/static
+      - media:/app/media
+    environment:
+      - DJANGO_SETTINGS_MODULE=production_2024.settings
+      - SECRET_KEY=django-insecure-ey+vweu#^u6jin-d4p0&7*%)w!^qkoz1hh&v*y@$oy(q3*b((w
+      - DEBUG=True
+      - ALLOWED_HOSTS=localhost,127.0.0.1
+      - CSRF_TRUSTED_ORIGINS=https://ephor.com.br
+      - CSRF_COOKIE_SECURE=False
+      - SECURE_SSL_REDIRECT=False
+      - SESSION_COOKIE_SECURE=False
+      - DB_NAME=django_db
+      - DB_USER=django_user
+      - DB_PASSWORD=secure_password
+      - DB_HOST=db
+      - DB_PORT=3306
     networks:
       ephor-network:
-        ipv4_address: 172.30.0.2
+        ipv4_address: 172.30.0.4
+    depends_on:
+      db:
+        condition: service_healthy
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "200k"
+        max-file: "10"
+        labels: "production_2024_logs"
 
 volumes:
   static:

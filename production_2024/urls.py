@@ -1,3 +1,6 @@
+from django.conf import settings
+from django.conf.urls.static import static
+
 """
 URL configuration for production_2024 project.
 
@@ -22,3 +25,8 @@ urlpatterns = [
     path('accounts/', include('allauth.urls')),
     path('', include('blog.urls')),  # Substitua 'blog' pela sua app de blog
 ]
+
+
+# Adicione esta linha para servir mídia em desenvolvimento
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

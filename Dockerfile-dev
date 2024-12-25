@@ -1,0 +1,64 @@
+# Use Python 3.10 como imagem base
+FROM python:3.10
+
+# Variável de ambiente para saída não armazenada em buffer
+ENV PYTHONUNBUFFERED=1
+
+# Defina o diretório de trabalho como /app
+WORKDIR /app
+
+# Atualize os pacotes e instale dependências necessárias
+RUN apt-get update && \
+    apt-get install -y \
+    default-libmysqlclient-dev \
+    default-mysql-client \
+    libicu-dev \
+    libharfbuzz-dev \
+    libfribidi-dev \
+    python3-tk \
+    nano \
+    netcat-openbsd && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
+# Atualize o pip e instale pacotes Python necessários
+RUN pip3 install --upgrade pip && \
+    pip3 install mysqlclient numpy
+
+# Copie requirements.txt e .env para /app
+COPY ./requirements.txt /app/requirements.txt
+COPY .env /app/.env
+
+# Instale as dependências do projeto
+RUN pip3 install --no-cache-dir -r /app/requirements.txt
+
+# Baixe modelos de linguagem Spacy
+RUN python3 -m spacy download pt_core_news_sm
+RUN python3 -m spacy download es_core_news_sm
+RUN python3 -m spacy download en_core_web_sm
+
+# Copie o diretório backend e rode o script loads.py
+COPY backend /app/backend
+RUN python3 backend/loads.py
+
+# Defina variáveis de ambiente
+ENV PYTHONPATH="/app/backend"
+ENV TZ=America/Sao_Paulo
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
+# Copie o restante dos arquivos para /app
+COPY . /app/
+
+# Configure diretórios e permissões
+RUN mkdir -p /var/log/uwsgi
+RUN chown -R www-data:www-data /var/log/uwsgi /app
+RUN chmod -R 777 /var/log/uwsgi /app
+
+# Exponha a porta de desenvolvimento
+EXPOSE 8000
+
+# Comando final
+CMD ["sh", "-c", "python3 manage.py makemigrations \
+    && python3 manage.py migrate \
+    && python3 manage.py collectstatic --noinput \
+    && python3 manage.py runserver 0.0.0.0:8000"]
