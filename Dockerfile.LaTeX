@@ -1,15 +1,36 @@
 # Use uma imagem base Debian
 FROM debian:bookworm
 
-# Instala os pacotes TeX Live necessários, incluindo abnTeX2 e suporte ao português
+# Instala os pacotes TeX Live necessários, ferramentas de compilação e suporte ao português
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
     texlive-full \
     texlive-publishers \
     texlive-lang-portuguese \
     texlive-latex-extra \
-    texlive-fonts-recommended && \
+    texlive-fonts-recommended \
+    python3 \
+    python3-pip \
+    python3-venv \
+    python3-dev \
+    build-essential \
+    g++ \
+    pkg-config \
+    libicu-dev \
+    icu-devtools && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
+# Criar ambiente virtual e instalar dependências
+COPY requirements_latex.txt /tmp/requirements_latex.txt
+RUN python3 -m venv /venv && \
+    /venv/bin/pip install --no-cache-dir -r /tmp/requirements_latex.txt --use-deprecated=legacy-resolver
+
+# Copiar conteúdo do diretório local para o contêiner
+COPY backend/LaTeX /app/LaTeX
+
+# Define o diretório de trabalho e saída
+WORKDIR /app
+ENV PATH="/venv/bin:$PATH"
+VOLUME /output
 CMD ["bash"]

@@ -1,3 +1,0 @@
-\postextual
-\bibliography{abntex2-modelo-artigo.bib}
-\end{document}
